@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/neo/Nextcloud/Uni/Bachelorthesis/proj/test/src/main.cpp
+stdio.h
+-
+stdlib.h
+-
+fplll.h
+-
+

@@ -1,0 +1,3 @@
+/home/neo/Nextcloud/Uni/Bachelorthesis/proj/test/src/CMakeFiles/rebuild_cache.dir
+/home/neo/Nextcloud/Uni/Bachelorthesis/proj/test/src/CMakeFiles/main.dir
+/home/neo/Nextcloud/Uni/Bachelorthesis/proj/test/src/CMakeFiles/edit_cache.dir
