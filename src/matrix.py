@@ -9,10 +9,8 @@
 # (c) 2017 - Daniel Jankowski
 
 
-import numpy
-
-
 from fpylll import IntegerMatrix
+from numpy import *
 
 
 class Matrix(IntegerMatrix):
