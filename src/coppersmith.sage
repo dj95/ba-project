@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/bin/env sage
 #
 # ba-proj
 #
@@ -11,11 +11,9 @@
 import sys 
 
 
-from matrix import Matrix
-from numpy import *
+from numpy import floor, ceil
 from sympy import Symbol, Poly, ZZ, QQ, pprint
 from sympy.polys.polymatrix import PolyMatrix
-
 
 def coppersmith():
     """
@@ -61,7 +59,7 @@ def get_polynoms(N, e):
     return h_1, h_2, f_p_1, f_q_1, f_p_2, f_q_2
 
 
-def index_set_x(m, t, x):
+def index_set_x_stages(m, t, x):
     """
     Generate the first index set I_x in a generator with
     the first, second, third or fourth set.
@@ -136,6 +134,17 @@ def index_set_x(m, t, x):
             i2, j2 = i2 + 1, 0
 
 
+def index_set_x(m, t):
+    for set in index_set_x_stages(m, t, 1):
+        yield set
+    for set in index_set_x_stages(m, t, 2):
+        yield set
+    for set in index_set_x_stages(m, t, 3):
+        yield set
+    for set in index_set_x_stages(m, t, 4):
+        yield set
+
+
 def index_set_y_p(m, t):
     """
     Generate the second index set I_y,p in a generator.
@@ -205,29 +214,14 @@ def generate_lattice(N, e, m):
     degree = h_1.degree()
 
     # initialize the matrix with 0 values
-    lattice = Matrix(degree, degree)
+    #lattice = Matrix(degree, degree)
 
-    print('\n\n==> Processing index set x')
+    print('==> Processing index set x')
 
     coeffs = {}
     count = 0
 
-    I_x = index_set_x(8, 0.75, 1)
-    for (i1, i2, j1, j2, u) in I_x:
-        #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
-        
-        p = Poly(x_p_1**j1 * x_p_2**j2 * y_q**(int(floor((i1 + i2) / 2))), x_p_1, x_p_2, y_q) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * h_2.mul_ground(u) * e**(m - (i1 + i2))
-
-        coeffs[count] = {}
-
-        for monom in p.as_dict():
-            #print('{} - {}'.format(monom, p.as_dict()[monom]))
-            coeffs[count][tupel_to_string(monom)] = p.as_dict()[monom]
-
-        count += 1
-        
-
-    I_x = index_set_x(8, 0.75, 2)
+    I_x = index_set_x(8, 0.75)
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
         
@@ -241,44 +235,7 @@ def generate_lattice(N, e, m):
 
         count += 1
 
-    I_x = index_set_x(8, 0.75, 3)
-    for (i1, i2, j1, j2, u) in I_x:
-        #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
-        
-        p = Poly(x_p_1**j1 * x_p_2**j2 * y_q**(int(floor((i1 + i2) / 2))), x_p_1, x_p_2, y_q) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * h_2.mul_ground(u) * e**(m - (i1 + i2))
-
-        coeffs[count] = {}
-
-        for monom in p.as_dict():
-            #print('{} - {}'.format(monom, p.as_dict()[monom]))
-            coeffs[count][tupel_to_string(monom)] = p.as_dict()[monom]
-
-        count += 1
-
-    I_x = index_set_x(8, 0.75, 4)
-    for (i1, i2, j1, j2, u) in I_x:
-        #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
-        
-        p = Poly(x_p_1**j1 * x_p_2**j2 * y_q**(int(floor((i1 + i2) / 2))), x_p_1, x_p_2, y_q) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * h_2.mul_ground(u) * e**(m - (i1 + i2))
-
-        coeffs[count] = {}
-
-        for monom in p.as_dict():
-            #print('{} - {}'.format(monom, p.as_dict()[monom]))
-            coeffs[count][tupel_to_string(monom)] = p.as_dict()[monom]
-
-        count += 1
-
-    #test_matrix = Matrix(int(m / 2)**3 - 1, int(m / 2)**3 - 1)
-    for monom in sorted(list(coeffs.keys())):
-        print('{} - {}'.format(monom, coeffs[monom]))
-    #    x = int(monom[:3], int(m / 2))
-    #    y = int(monom[-3:], int(m / 2))
-    #    test_matrix[x, y] = long(coeffs[monom])
-
-    #print(test_matrix)
-
-    print('\n\n==> Processing index set y p')
+    print('==> Processing index set y p')
 
     #TODO: test indices, check if indices are calculated correctly
     I_y_p = index_set_y_p(8, 0.75)
@@ -289,10 +246,15 @@ def generate_lattice(N, e, m):
         #TODO: correct function?
         p = Poly(y_p**exponent, y_p) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * e**(m - (i1 + i2))
 
-        for monom in p.as_dict():
-            print('{}000 - {}'.format(tupel_to_string(monom), p.as_dict()[monom]))
+        coeffs[count] = {}
 
-    print('\n\n==> Processing index set y q')
+        for monom in p.as_dict():
+            #print('{}000 - {}'.format(tupel_to_string(monom), p.as_dict()[monom]))
+            coeffs[count][tupel_to_string(monom) + '000'] = p.as_dict()[monom]
+
+        count += 1
+
+    print('==> Processing index set y q\n')
 
     I_y_q = index_set_y_q(8, 0.75)
     for (i1, i2, j2) in I_y_q:
@@ -301,5 +263,31 @@ def generate_lattice(N, e, m):
 
         p = Poly(y_q**exponent, y_q) * f_q_1.mul_ground(i1) * f_q_2.mul_ground(i2) * e**(m - (i1 + i2))
 
+        coeffs[count] = {}
+
         for monom in p.as_dict():
-            print('000{} - {}'.format(tupel_to_string(monom), p.as_dict()[monom]))
+            #print('000{} - {}'.format(tupel_to_string(monom), p.as_dict()[monom]))
+            coeffs[count]['000' + tupel_to_string(monom)] = p.as_dict()[monom]
+
+        count += 1
+
+    c = 0
+    for polynom in sorted(list(coeffs.keys())):
+        if len(coeffs[polynom]) > 0:
+            #print('{} - {}'.format(polynom, coeffs[polynom]))
+            c += 1
+
+    test_matrix = Matrix((int(m)**6), c)
+
+    y = 0
+    for polynom in coeffs:
+        if len(coeffs[polynom]) > 0:
+            for monom in coeffs[polynom]:
+                x = int(monom, base=8)
+                
+                #TODO: rework polynoms with sage instead of sympy
+                test_matrix[x, y] = long(coeffs[polynom][monom])
+            y += 1
+
+    #print(test_matrix)
+    return test_matrix

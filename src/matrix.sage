@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/bin/env sage
 #
 # ba-proj
 #

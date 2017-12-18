@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/bin/env sage
 #
 # ba-proj
 #
@@ -10,7 +10,7 @@
 
 
 from fpylll import LLL
-from matrix import Matrix
+#from matrix import Matrix
 
 
 def test_lll_reduction():
@@ -22,19 +22,19 @@ def test_lll_reduction():
     z = [[1, -1, 3], [1, 0, 5], [1, 2, 6]]
 
     # generate the matrix object for fpylll from our matrix
-    matrix = Matrix.from_matrix(z)
+    matrix = Matrix(z)
 
     # print the matrix and if its reduced
     print('  -> Start matrix')
     print(matrix)
-    print('  -> is reduced: {}'.format(LLL.is_reduced(matrix)))
+    print('  -> is reduced: {}'.format(matrix.is_LLL_reduced()))
     print()
 
     # reduce the matrix with fpylll
-    reduction = LLL.reduction(matrix)
+    reduction = matrix.LLL()
 
     # print the reduced matrix and if its reduced
     print('  -> Reduced matrix')
     print(reduction)
-    print('  -> is reduced: {}'.format(LLL.is_reduced(reduction)))
+    print('  -> is reduced: {}'.format(reduction.is_LLL_reduced()))
     print('')

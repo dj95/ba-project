@@ -1,7 +1,7 @@
 from fpylll import IntegerMatrix, LLL
 from multiprocessing import Pool
 
-d, workers, tasks = 30, 4, 128
+d, workers, tasks = 100, 4, 128
 
 def run_it(p, f, A, prefix=""):
     """Print status during parallel execution."""
@@ -14,5 +14,5 @@ def run_it(p, f, A, prefix=""):
     sys.stderr.write('\r{0} done {1:.2%}\n'.format(prefix, float(i+1)/len(A)))
     return r
 
-A = [IntegerMatrix.random(d, "uniform", bits=30) for _ in range(tasks)]
+A = [IntegerMatrix.random(d, "uniform", bits=300) for _ in range(tasks)]
 A = run_it(Pool(workers), LLL.reduction, A)
