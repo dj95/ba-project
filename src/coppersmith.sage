@@ -10,7 +10,6 @@
 
 import sys 
 
-
 from numpy import floor, ceil
 from sympy import Symbol, Poly, ZZ, QQ, pprint
 from sympy.polys.polymatrix import PolyMatrix
@@ -213,81 +212,135 @@ def generate_lattice(N, e, m):
     # get the polynoms degree for the matrix
     degree = h_1.degree()
 
-    # initialize the matrix with 0 values
-    #lattice = Matrix(degree, degree)
-
-    print('==> Processing index set x')
-
+    # initial values
     coeffs = {}
     count = 0
 
+    print('==> Processing index set x')
+
+    # initialize the generator for the last index set
     I_x = index_set_x(8, 0.75)
+
+    # iterate through the last first set
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
         
+        # insert the indices into the polynom
         p = Poly(x_p_1**j1 * x_p_2**j2 * y_q**(int(floor((i1 + i2) / 2))), x_p_1, x_p_2, y_q) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * h_2.mul_ground(u) * e**(m - (i1 + i2))
 
         coeffs[count] = {}
 
+        # save the multigrade as dict in base-m
         for monom in p.as_dict():
-            #print('{} - {}'.format(monom, p.as_dict()[monom]))
             coeffs[count][tupel_to_string(monom)] = p.as_dict()[monom]
 
+        # increase the counter
         count += 1
 
     print('==> Processing index set y p')
 
-    #TODO: test indices, check if indices are calculated correctly
+    # initialize the generator for the last index set
     I_y_p = index_set_y_p(8, 0.75)
+
+    # iterate through the second index set
     for (i1, i2, j1) in I_y_p:
         #print('  -> (i1, i2, j1) = ({}, {}, {})'.format(i1, i2, j1))
+        
+        # calculate the exponent for y_q
         exponent = int(floor((i1 + i2) / 2) + j1)
         
-        #TODO: correct function?
+        # insert the indices into the polynom
         p = Poly(y_p**exponent, y_p) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * e**(m - (i1 + i2))
 
         coeffs[count] = {}
 
+        # save the multigrade as dict in base-m
         for monom in p.as_dict():
-            #print('{}000 - {}'.format(tupel_to_string(monom), p.as_dict()[monom]))
             coeffs[count][tupel_to_string(monom) + '000'] = p.as_dict()[monom]
 
+        # increase the counter
         count += 1
 
     print('==> Processing index set y q\n')
 
+    # initialize the generator for the last index set
     I_y_q = index_set_y_q(8, 0.75)
+
+    # iterate through the last index set
     for (i1, i2, j2) in I_y_q:
         #print('  -> (i1, i2, j2) = ({}, {}, {})'.format(i1, i2, j2))
+
+        # calculate the exponent for y_q
         exponent = int(floor((i1 + i2) / 2) + j2)
 
+        # insert the indices into the polynom
         p = Poly(y_q**exponent, y_q) * f_q_1.mul_ground(i1) * f_q_2.mul_ground(i2) * e**(m - (i1 + i2))
 
         coeffs[count] = {}
 
+        # save the multigrade as dict in base-m
         for monom in p.as_dict():
-            #print('000{} - {}'.format(tupel_to_string(monom), p.as_dict()[monom]))
             coeffs[count]['000' + tupel_to_string(monom)] = p.as_dict()[monom]
 
+        # increase the counter
         count += 1
 
     c = 0
+    col_indice = {}
+    col_index = 0
+    # get the polynom count for every polynom with at least one monom
     for polynom in sorted(list(coeffs.keys())):
         if len(coeffs[polynom]) > 0:
             #print('{} - {}'.format(polynom, coeffs[polynom]))
             c += 1
+        for monom in coeffs[polynom]:
+            col_indice[monom] = col_index
+            col_index += 1
 
-    test_matrix = Matrix((int(m)**6), c)
+    # initialize the matrix
+    test_matrix = Matrix(c, col_index)
 
     y = 0
+    # iterate through the polynoms we save before
     for polynom in coeffs:
+        # check if we have monoms
         if len(coeffs[polynom]) > 0:
+            # iterate through every monom of the polynom
             for monom in coeffs[polynom]:
-                x = int(monom, base=8)
+                # build the index from the multigrade
+                x = col_indice[monom]
                 
                 #TODO: rework polynoms with sage instead of sympy
-                test_matrix[x, y] = long(coeffs[polynom][monom])
+                # set the depending cell of the matrix to the coefficient
+                test_matrix[y, x] = long(coeffs[polynom][monom])
             y += 1
+
+    # eleminate cols and rows with 0
+    cols = test_matrix.ncols()
+    rows = test_matrix.nrows()
+    delete_index = []
+    index = 0
+
+    # iterate through columns
+    for col in test_matrix.columns():
+        # debug
+        sys.stdout.write('\r==> Checking column {}/{}'.format(index, cols))
+        sys.stdout.flush()
+        
+        # iterate through every row of the column
+        for i in range(rows):
+            # if we have no 0, skip to the next column
+            if col[i] != 0:
+                break
+            # if we have the last rows value in one column and its 0
+            if col[i] == 0 and i == (rows - 1):
+                # delete the column because it contains 0 only
+                delete_index.append(index)
+        index += 1
+
+    print('\n==> deleting {} columns with 0'.format(len(delete_index)))
+    test_matrix = test_matrix.delete_columns(delete_index)
+    print('==> finished deleting colums')
 
     #print(test_matrix)
     return test_matrix

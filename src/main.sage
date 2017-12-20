@@ -18,19 +18,26 @@ def main():
     # import sage modules
     load('./coppersmith.sage')
     load('./test.sage')
+    load('./keygen.sage')
 
     # test the lll algorithm
     test_lll_reduction()
 
+    keys = generate_keys(1024)
+
     # generate the lattice for our parameters
     matrix = generate_lattice(
-            630548215070129547156718332495889632234434145411971275888376987603260225252787926135276738944105689100036295535868141424386536403649578707699128189491432138631900590774729214990015369102760964884776344849717811484309528915040117952098061886881,
-            65535,
+            keys['N'],
+            keys['e'],
             8
             )
 
+    print('\n==> Got an {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
+    print('==> matrix is reduced: {}'.format(matrix.is_LLL_reduced()))
+    print('==> Reducing matrix with LLL-algorithm')
+
     # reduce it
-    #reduced_matrix = matrix.LLL()
+    reduced_matrix = matrix.LLL()
 
     # use groebner
     pass
