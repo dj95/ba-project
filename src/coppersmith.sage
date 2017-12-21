@@ -11,7 +11,7 @@
 import sys 
 
 from numpy import floor, ceil
-from sympy import Symbol, Poly, ZZ, QQ, pprint
+from sympy import Symbol, Poly, QQ, pprint
 from sympy.polys.polymatrix import PolyMatrix
 
 def coppersmith():
@@ -27,6 +27,15 @@ def get_polynoms(N, e):
     x_p_1, x_q_1 = Symbol('x_p_1'), Symbol('x_q_1')
     x_p_2, x_q_2 = Symbol('x_p_2'), Symbol('x_q_2')
     y_p, y_q = Symbol('y_p'), Symbol('y_q')
+
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ, order='lex')
+
+    h1 = (N - 1) * xp1 * xp2 + xp1 + N * xp2
+    h2 = (N - 1) * xq1 * xq2 + xq1 + N * xq2
+    fp1 = N + xp1 * (N - yp)
+    fp2 = 1 + xp2 * (yp - 1)
+    fq1 = 1 + xq1 * (yq - 1)
+    fq2 = N + xq2 * (N - yq)
 
     # create the polynoms
     h_1 = Poly(
@@ -55,7 +64,8 @@ def get_polynoms(N, e):
             modulus=e
             )
 
-    return h_1, h_2, f_p_1, f_q_1, f_p_2, f_q_2
+    #return h_1, h_2, f_p_1, f_q_1, f_p_2, f_q_2
+    return h1, h2, fp1, fq1, fp2, fq2
 
 
 def index_set_x_stages(m, t, x):
@@ -201,16 +211,11 @@ def generate_lattice(N, e, m):
     the given attack.
     """
     print('==> generate lattice')
-    # set up symbols
-    x_p_1, x_q_1 = Symbol('x_p_1'), Symbol('x_q_1')
-    x_p_2, x_q_2 = Symbol('x_p_2'), Symbol('x_q_2')
-    y_p, y_q = Symbol('y_p'), Symbol('y_q')
+
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
 
     # get the polynomials
-    h_1, h_2, f_p_1, f_q_1, f_p_2, f_q_2 = get_polynoms(N, e)
-
-    # get the polynoms degree for the matrix
-    degree = h_1.degree()
+    h1, h2, fp1, fq1, fp2, fq2 = get_polynoms(N, e)
 
     # initial values
     coeffs = {}
@@ -224,15 +229,15 @@ def generate_lattice(N, e, m):
     # iterate through the last first set
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
-        
+
         # insert the indices into the polynom
-        p = Poly(x_p_1**j1 * x_p_2**j2 * y_q**(int(floor((i1 + i2) / 2))), x_p_1, x_p_2, y_q) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * h_2.mul_ground(u) * e**(m - (i1 + i2))
+        p = xp1**j1 * xp2**j2 * yq**(int(floor((i1 + i2) / 2))) * fp1^i1 * fp2^i2 * h2^u * e^(m - (i1 + i2))
 
         coeffs[count] = {}
 
         # save the multigrade as dict in base-m
-        for monom in p.as_dict():
-            coeffs[count][tupel_to_string(monom)] = p.as_dict()[monom]
+        for monom in p.dict():
+            coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
         # increase the counter
         count += 1
@@ -250,13 +255,16 @@ def generate_lattice(N, e, m):
         exponent = int(floor((i1 + i2) / 2) + j1)
         
         # insert the indices into the polynom
-        p = Poly(y_p**exponent, y_p) * f_p_1.mul_ground(i1) * f_p_2.mul_ground(i2) * e**(m - (i1 + i2))
+        p = yp**exponent * fp1**i1 * fp2**i2 * e**(m - (i1 + i2))
 
         coeffs[count] = {}
 
         # save the multigrade as dict in base-m
-        for monom in p.as_dict():
-            coeffs[count][tupel_to_string(monom) + '000'] = p.as_dict()[monom]
+        for monom in p.dict():
+            # sort the multigrade that we have the grades vor xp1 xp2 yp1 yp2 xq1 xq2
+            monom_string = tupel_to_string(monom)
+
+            coeffs[count][monom_string] = p.dict()[monom]
 
         # increase the counter
         count += 1
@@ -274,13 +282,17 @@ def generate_lattice(N, e, m):
         exponent = int(floor((i1 + i2) / 2) + j2)
 
         # insert the indices into the polynom
-        p = Poly(y_q**exponent, y_q) * f_q_1.mul_ground(i1) * f_q_2.mul_ground(i2) * e**(m - (i1 + i2))
+        p = yq**exponent * fq1**i1 * fq2**i2 * e**(m - (i1 + i2))
 
         coeffs[count] = {}
 
         # save the multigrade as dict in base-m
-        for monom in p.as_dict():
-            coeffs[count]['000' + tupel_to_string(monom)] = p.as_dict()[monom]
+        for monom in p.dict():
+            # sort the multigrade that we have the grades vor xp1 xp2 yp1 yp2 xq1 xq2
+            monom_string = tupel_to_string(monom)
+
+            # save the mulitgrade
+            coeffs[count][monom_string] = p.dict()[monom]
 
         # increase the counter
         count += 1
@@ -289,42 +301,43 @@ def generate_lattice(N, e, m):
     col_indice = {}
     col_index = 0
     # get the polynom count for every polynom with at least one monom
+    # this prevents rows with 0 only
     for polynom in sorted(list(coeffs.keys())):
         if len(coeffs[polynom]) > 0:
-            #print('{} - {}'.format(polynom, coeffs[polynom]))
             c += 1
         for monom in coeffs[polynom]:
-            col_indice[monom] = col_index
-            col_index += 1
+            if monom not in col_indice:
+                col_indice[monom] = col_index
+                col_index += 1
 
     # initialize the matrix
-    test_matrix = Matrix(c, col_index)
+    matrix = Matrix(c, col_index)
 
-    y = 0
+    row = 0
     # iterate through the polynoms we save before
     for polynom in coeffs:
         # check if we have monoms
         if len(coeffs[polynom]) > 0:
             # iterate through every monom of the polynom
             for monom in coeffs[polynom]:
-                # build the index from the multigrade
-                x = col_indice[monom]
+                # get the index from the monom grade
+                col = col_indice[monom]
                 
                 #TODO: rework polynoms with sage instead of sympy
                 # set the depending cell of the matrix to the coefficient
-                test_matrix[y, x] = long(coeffs[polynom][monom])
-            y += 1
+                matrix[row, col] = long(coeffs[polynom][monom])
+            row += 1
 
     # eleminate cols and rows with 0
-    cols = test_matrix.ncols()
-    rows = test_matrix.nrows()
+    cols = matrix.ncols()
+    rows = matrix.nrows()
     delete_index = []
     index = 0
 
     # iterate through columns
-    for col in test_matrix.columns():
+    for col in matrix.columns():
         # debug
-        sys.stdout.write('\r==> Checking column {}/{}'.format(index, cols))
+        sys.stdout.write('\r==> Checking column {}/{}'.format(index + 1, cols))
         sys.stdout.flush()
         
         # iterate through every row of the column
@@ -339,8 +352,8 @@ def generate_lattice(N, e, m):
         index += 1
 
     print('\n==> deleting {} columns with 0'.format(len(delete_index)))
-    test_matrix = test_matrix.delete_columns(delete_index)
+    matrix = matrix.delete_columns(delete_index)
     print('==> finished deleting colums')
 
-    #print(test_matrix)
-    return test_matrix
+    #print(matrix)
+    return matrix, col_indice

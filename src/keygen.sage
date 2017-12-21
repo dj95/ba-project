@@ -10,50 +10,6 @@ from functools import reduce
 from math import log
 
 
-def eea(a, b):
-    """
-    The extended euclidian algorithm with a and b as input.
-    """
-    if (a==0): return (b, 0, 1)
-    else: g, y, x = eea(b % a, a); return (g, x-(b // a)*y,y)
-
-
-def modinv(a, m):
-    """
-    Returns the modular mulitplicative inverse of a in m.
-    Return 'nicht existent' if the inverse doesn't exist.
-    """
-    gcd, x, y = eea(a, m)
-    if (gcd!=1): return "nicht existent"
-    else: return x % m
-
-
-def chinese_remainder_theorem(x, moduln):
-    """
-    Solve modular equations:
-
-        z = x[0] mod moduln[0]
-        z = x[1] mod moduln[2]
-        ...
-        z = x[n] mod moduln[n]
-
-    and return z.
-    """
-    # initial values
-    phi, z = 1, 0
-
-    # get the common modulus
-    prod = reduce(lambda a, b: a*b, moduln)
-
-    # calculate the crt
-    for i in range(len(x)):
-        phi = prod // moduln[i]
-        z += x[i]  * modinv(phi, moduln[i]) * phi
-
-    # return our value we searched for
-    return z % prod
-
-
 def sqm(a, e, m):
     """
     Calculate a**e mod m with square and multiply.
@@ -91,18 +47,13 @@ def generate_keys(bit_length=1024):
     dp = number.getRandomInteger(number.size(int(boundary)))
     dq = number.getRandomInteger(number.size(int(boundary)))
 
-    # calculate our d with the random dp and dq
-    d = chinese_remainder_theorem(
-            [dp, dq],
-            [p, q]
-            )
+    d = crt(dp, dq, p, q)
 
     # get the related e to our d
-    e = modinv(d, (p - 1) * (q - 1))
-    
-    # check if the modular inverse exist and we have all our parameters
-    if e != 'nicht existent':
-        return {
+    try:
+        e = inverse_mod(d, (p - 1) * (q - 1))
+
+        keys = {
                 'p': p,
                 'q': q,
                 'N': p * q,
@@ -111,10 +62,10 @@ def generate_keys(bit_length=1024):
                 'dp': dp,
                 'dq': dq
                 }
-    else:
-        # if e is non existant because of the modular inverse
-        # generate new values
-        return generate_keys(bit_length)
+    except ZeroDivisionError:
+        keys = generate_keys(bit_length)
+
+    return keys
 
 
 def check_parameters(N, e, d):
