@@ -1,4 +1,4 @@
-#!/bin/env sage
+#!/usr/bin/env sage
 #
 # keygen for crt rsa
 #
