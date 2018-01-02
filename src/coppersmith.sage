@@ -24,12 +24,9 @@ def coppersmith():
 
 def get_polynoms(N, e):
     # define symbols for equations
-    x_p_1, x_q_1 = Symbol('x_p_1'), Symbol('x_q_1')
-    x_p_2, x_q_2 = Symbol('x_p_2'), Symbol('x_q_2')
-    y_p, y_q = Symbol('y_p'), Symbol('y_q')
+    R.<xp1, xp2, xq1, xq2, yq, yp> = PolynomialRing(ZZ, order='lex')
 
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ, order='lex')
-
+    # create the polynoms
     h1 = (N - 1) * xp1 * xp2 + xp1 + N * xp2
     h2 = (N - 1) * xq1 * xq2 + xq1 + N * xq2
     fp1 = N + xp1 * (N - yp)
@@ -37,34 +34,6 @@ def get_polynoms(N, e):
     fq1 = 1 + xq1 * (yq - 1)
     fq2 = N + xq2 * (N - yq)
 
-    # create the polynoms
-    h_1 = Poly(
-            (N - 1) * x_p_1 * x_p_2 + x_p_1 + N * x_p_2,
-            modulus=e
-            )
-    h_2 = Poly(
-            (N - 1) * x_q_1 * x_q_2 + N * x_q_1 + x_q_2,
-            modulus=e
-            )
-    
-    f_p_1 = Poly(
-            N + x_p_1 * (N - y_p),
-            modulus=e
-            )
-    f_q_1 = Poly(
-            1 + x_q_1 * (y_q -1),
-            modulus=e
-            )
-    f_p_2 = Poly(
-            1 + x_p_2 * (y_p -1),
-            modulus=e
-            )
-    f_q_2= Poly(
-            N + x_q_2 * (N - y_q),
-            modulus=e
-            )
-
-    #return h_1, h_2, f_p_1, f_q_1, f_p_2, f_q_2
     return h1, h2, fp1, fq1, fp2, fq2
 
 
@@ -296,6 +265,8 @@ def generate_lattice(N, e, m):
 
         # increase the counter
         count += 1
+
+    print('==> Got {} index sets'.format(count))
 
     c = 0
     col_indice = {}

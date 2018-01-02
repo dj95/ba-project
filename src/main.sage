@@ -9,6 +9,9 @@
 # (c) 2017 - Daniel Jankowski
 
 
+from Crypto.Util import number
+
+
 def main():
     print('#####################################')
     print('# Attack an small CRT-RSA exponents #')
@@ -32,6 +35,7 @@ def main():
             8
             )
 
+    #NOTE: check the dimension: in the paper its 180 for m=8
     print('\n==> Got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
     print('==> Reducing matrix with LLL-algorithm')
 
@@ -45,7 +49,7 @@ def main():
     reduced_matrix = matrix.LLL()
 
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yq, yp> = PolynomialRing(ZZ)
 
     polynom_vector = []
 
