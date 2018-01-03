@@ -406,9 +406,6 @@ def generate_lattice(N, e, m):
 
     R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
 
-    # get the polynomials
-    h1, h2, fp1, fq1, fp2, fq2 = get_polynoms(N, e)
-
     # initial values
     coeffs = {}
     count = 0
