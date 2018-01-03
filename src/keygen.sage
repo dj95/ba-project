@@ -1,8 +1,12 @@
 #!/usr/bin/env sage
 #
-# keygen for crt rsa
+# ba-proj
 #
-# (c) 2017 Daniel Jankowski
+# This project is the implementation of the small
+# CRT-RSA attack of Takayusa, Lu and Peng utilizing
+# the coppersmith and L3 algorithm.
+#
+# (c) 2017 - Daniel Jankowski
 
 
 from Crypto.Util import number
@@ -27,7 +31,7 @@ def sqm(a, e, m):
     return c
 
 
-def generate_keys(bit_length=1024):
+def generate_keys(bit_length=1024, delta=0.090):
     """
     Generate p, q, N, dp, dq, d, e for CRT-RSA with
     small dp and dq for the given bit size.
@@ -41,7 +45,7 @@ def generate_keys(bit_length=1024):
 
     # get our boundary for the attack so we are able to compute
     # small dp's and dq's
-    boundary = N ** 0.090
+    boundary = N ** delta
 
     # ger random smal dp and dq with the calculated boundary
     dp = number.getRandomInteger(number.size(int(boundary)))

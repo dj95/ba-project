@@ -10,7 +10,6 @@
 
 
 from fpylll import LLL
-#from matrix import Matrix
 
 
 def test_lll_reduction():

@@ -14,33 +14,11 @@ from numpy import floor, ceil
 from sympy import Symbol, Poly, QQ, pprint
 from sympy.polys.polymatrix import PolyMatrix
 
-def coppersmith():
-    """
-    Apply the coppersmith-algorithm
-    """
-
-    pass
-
-
-def get_polynoms(N, e):
-    # define symbols for equations
-    R.<xp1, xp2, xq1, xq2, yq, yp> = PolynomialRing(ZZ, order='lex')
-
-    # create the polynoms
-    h1 = (N - 1) * xp1 * xp2 + xp1 + N * xp2
-    h2 = (N - 1) * xq1 * xq2 + xq1 + N * xq2
-    fp1 = N + xp1 * (N - yp)
-    fp2 = 1 + xp2 * (yp - 1)
-    fq1 = 1 + xq1 * (yq - 1)
-    fq2 = N + xq2 * (N - yq)
-
-    return h1, h2, fp1, fq1, fp2, fq2
-
 
 def index_set_x_stages(m, t, x):
     """
     Generate the first index set I_x in a generator with
-    the first, second, third or fourth set.
+    the first, second, third or fourth subset.
     """
     if x == 1:
         # initial values
@@ -117,6 +95,10 @@ def index_set_x_stages(m, t, x):
 
 
 def index_set_x(m, t):
+    """
+    Generate all index sets of the different subsets of index set I_x
+    with one generator expression.
+    """
     for set in index_set_x_stages(m, t, 1):
         yield set
     for set in index_set_x_stages(m, t, 2):
@@ -174,12 +156,245 @@ def index_set_y_q(m, t):
 
 
 def tupel_to_string(tupel):
+    """
+    Concatenate all values of a tupel to one string.
+    """
     output = ''
 
+    # iterate through all values
     for value in tupel:
+        # concatenate the value to the output string
         output = '{}{}'.format(output, value)
 
+    # return it
     return output
+
+
+def h_odd(i1, i2, j1, j2, u, N, e ,m):
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+
+    # for loops simulate the sums
+    for ip in range(int(floor((i1 + i2) / 2)) + 1, i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for l in range(0, u + 1):
+                for kp1 in range(0, i1 - ip1 + l + 1):
+                    for kp2 in range(0, i2 - ip + ip1 + u - l + 1):
+                        # initialize the monom
+                        monom = 1
+
+                        # set the correct sign
+                        monom *= (-1)^(2*ip1 + i2 - ip + u - l + kp2)
+
+                        # multiply all of the binomial coefficients
+                        monom *= binomial(i2, ip - ip1)
+                        monom *= binomial(i1, ip1)
+                        monom *= binomial(u, l)
+                        monom *= binomial(i1 - ip1 + l, kp1)
+                        monom *= binomial(i2 - ip + ip1 + u - l, kp2)
+
+                        # multiply N and e to the coefficient
+                        monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + l)
+                        monom *= e^(m - (i1 + i2 + u))
+
+                        # multiply with the correct grades for xp1, xp2, yp
+                        monom *= xp1^(i1 + j1 + u - kp1)
+                        monom *= xp2^(i2 + j2 + u - kp2)
+                        monom *= yp^(ip - int(floor((i1 + i2) / 2)))
+
+                        # add the monom to the polynom
+                        p += monom
+    # return it
+    return p
+
+
+def h_even(i1, i2, j1, j2, u, N, e ,m):
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+
+    # for loops simulate the sums
+    for ip in range(0, int(floor((i1 + i2) / 2)) + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for l in range(0, u + 1):
+                for kq1 in range(0, ip1 + j1 + u - l + 1):
+                    for kq2 in range(0, ip - ip1 + j2 + l + 1):
+                        # initialize the monom
+                        monom = 1
+
+                        # set the correct sign
+                        monom *= (-1)^(2*ip1 + i2 - ip + u - l + kq1)
+
+                        # multiply all of the binomial coefficients
+                        monom *= binomial(i2, ip - ip1)
+                        monom *= binomial(i1, ip1)
+                        monom *= binomial(u, l)
+                        monom *= binomial(ip1 + j1 + u - l, kq2)
+                        monom *= binomial(ip + j2 + l - ip1, kq2)
+
+                        # multiply N and e to the coefficient
+                        monom *= N^(i1 - ip1 + ip + l)
+                        monom *= e^(m - (i1 + i2 + u))
+
+                        # multiply with the correct grades for xp1, xp2, yp
+                        monom *= xq1^(i1 + j1 + u - kq1)
+                        monom *= xq2^(i2 + j2 + u - kq2)
+                        monom *= yq^(int(floor((i1 + i2) / 2)) - ip)
+
+                        # add the monom to the polynom
+                        p += monom
+    # return it
+    return p
+
+
+def g_p(i1, i2, j1, N, e, m):
+    """
+    Calculate the second shift polunomial with all substitutions
+    like in the proof on page 31/32.
+    """
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+    
+    # for loops simulate the sums
+    for ip in range(int(floor((i1 + i2) / 2) - j1 + 1), i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for kp1 in range(0, i1 - ip1 + 1):
+                for kp2 in range(0, i2 - ip + ip1 + 1):
+                    # initialize the monom
+                    monom = 1
+
+                    # set the correct sign
+                    monom *= (-1)^(2*ip1 + i2 - ip + kp2)
+
+                    # multiply all of the binomial coefficients
+                    monom *= binomial(i2, ip - ip1)
+                    monom *= binomial(i1, ip1)
+                    monom *= binomial(i1 - ip1, kp1)
+                    monom *= binomial(i2 - ip + ip1, kp2)
+
+                    # multiply N and e to the coefficient
+                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+                    monom *= e^(m - (i1 + i2))
+        
+                    # multiply with the correct grades for xp1, xp2, yp
+                    monom *= xp1^(i1 - kp1)
+                    monom *= xp2^(i2 - kp2)
+                    monom *= yp^(ip - int(floor((i1 + i2) / 2)) + j1)
+
+                    # add the monom to the polynom
+                    p += monom
+
+    # for loops simulate the sums
+    for ip in range(0, int(floor((i1 + i2) / 2)) - j1 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for kq1 in range(0, ip1 + 1):
+                for kq2 in range(0, ip - ip1 + 1):
+                    # initialize the monom
+                    monom = 1
+
+                    # set the correct sign
+                    monom *= (-1)^(2*ip1 + i2 - ip + kq1)
+
+                    # multiply all of the binomial coefficients
+                    monom *= binomial(i2, ip - ip1)
+                    monom *= binomial(i1, ip1)
+                    monom *= binomial(ip1, kq1)
+                    monom *= binomial(ip - ip1, kq2)
+
+                    # multiply N and e to the coefficient
+                    monom *= N^(i1 - ip1 + ip)
+                    monom *= e^(m - (i1 + i2))
+        
+                    # multiply with the correct grades for xp1, xp2, yp
+                    monom *= xq1^(i1 - kq1)
+                    monom *= xq2^(i2 - kq2)
+                    monom *= yq^(int(floor((i1 + i2) / 2)) - j1 - ip)
+
+                    # add the monom to the polynom
+                    p += monom
+    # return it
+    return p
+
+
+def g_q(i1, i2, j2, N, e, m):
+    """
+    Calculate the third shift polunomial with all substitutions
+    like in the proof on page 31/32., just with -j1 substituted
+    by + j2 for the third polynomial instead of the second one.
+    """
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+    
+    # for loops simulate the sums
+    for ip in range(int(floor((i1 + i2) / 2) + j2 + 1), i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for kp1 in range(0, i1 - ip1 + 1):
+                for kp2 in range(0, i2 - ip + ip1 + 1):
+                    # initialize the monom
+                    monom = 1
+
+                    # set the correct sign
+                    monom *= (-1)^(2*ip1 + i2 - ip + kp2)
+
+                    # multiply all of the binomial coefficients
+                    monom *= binomial(i2, ip - ip1)
+                    monom *= binomial(i1, ip1)
+                    monom *= binomial(i1 - ip1, kp1)
+                    monom *= binomial(i2 - ip + ip1, kp2)
+
+                    # multiply N and e to the coefficient
+                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+                    monom *= e^(m - (i1 + i2))
+        
+                    # multiply with the correct grades for xp1, xp2, yp
+                    monom *= xp1^(i1 - kp1)
+                    monom *= xp2^(i2 - kp2)
+                    monom *= yp^(ip - int(floor((i1 + i2) / 2)) - j2)
+
+                    # add the monom to the polynom
+                    p += monom
+
+    # for loops simulate the sums
+    for ip in range(0, int(floor((i1 + i2) / 2)) + j2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for kq1 in range(0, ip1 + 1):
+                for kq2 in range(0, ip - ip1 + 1):
+                    # initialize the monom
+                    monom = 1
+
+                    # set the correct sign
+                    monom *= (-1)^(2*ip1 + i2 - ip + kq1)
+
+                    # multiply all of the binomial coefficients
+                    monom *= binomial(i2, ip - ip1)
+                    monom *= binomial(i1, ip1)
+                    monom *= binomial(ip1, kq1)
+                    monom *= binomial(ip - ip1, kq2)
+
+                    # multiply N and e to the coefficient
+                    monom *= N^(i1 - ip1 + ip)
+                    monom *= e^(m - (i1 + i2))
+        
+                    # multiply with the correct grades for xp1, xp2, yp
+                    monom *= xq1^(i1 - kq1)
+                    monom *= xq2^(i2 - kq2)
+                    monom *= yq^(int(floor((i1 + i2) / 2)) + j2 - ip)
+
+                    # add the monom to the polynom
+                    p += monom
+    # return it
+    return p
 
 
 def generate_lattice(N, e, m):
@@ -207,8 +422,13 @@ def generate_lattice(N, e, m):
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
-        # insert the indices into the polynom
-        p = xp1**j1 * xp2**j2 * yq**(int(floor((i1 + i2) / 2))) * fp1^i1 * fp2^i2 * h2^u * e^(m - (i1 + i2))
+        # calculate the polynomial for the index set
+        p = h_odd(i1, i2, j1, j2, u, N, e ,m)
+        p += h_even(i1, i2, j1, j2, u, N, e ,m)
+
+        # avoid rows with 0 only
+        if p == 0:
+            continue
 
         coeffs[count] = {}
 
@@ -228,11 +448,12 @@ def generate_lattice(N, e, m):
     for (i1, i2, j1) in I_y_p:
         #print('  -> (i1, i2, j1) = ({}, {}, {})'.format(i1, i2, j1))
         
-        # calculate the exponent for y_q
-        exponent = int(floor((i1 + i2) / 2) + j1)
-        
-        # insert the indices into the polynom
-        p = yp**exponent * fp1**i1 * fp2**i2 * e**(m - (i1 + i2))
+        # calculate the polynomial for the index set
+        p = g_p(i1, i2, j1, N, e, m)
+
+        # avoid rows with 0 only
+        if p == 0:
+            continue
 
         coeffs[count] = {}
 
@@ -254,12 +475,13 @@ def generate_lattice(N, e, m):
     # iterate through the last index set
     for (i1, i2, j2) in I_y_q:
         #print('  -> (i1, i2, j2) = ({}, {}, {})'.format(i1, i2, j2))
+       
+        # calculate the polynomial for the index set
+        p = g_q(i1, i2, j2, N, e ,m)
 
-        # calculate the exponent for y_q
-        exponent = int(floor((i1 + i2) / 2) + j2)
-
-        # insert the indices into the polynom
-        p = yq**exponent * fq1**i1 * fq2**i2 * e**(m - (i1 + i2))
+        # avoid rows with 0 only
+        if p == 0:
+            continue
 
         coeffs[count] = {}
 
@@ -302,12 +524,11 @@ def generate_lattice(N, e, m):
                 # get the index from the monom grade
                 col = col_indice[monom]
                 
-                #TODO: rework polynoms with sage instead of sympy
                 # set the depending cell of the matrix to the coefficient
                 matrix[row, col] = long(coeffs[polynom][monom])
             row += 1
 
-    # eleminate cols and rows with 0
+    # eliminate cols with 0
     cols = matrix.ncols()
     rows = matrix.nrows()
     delete_index = []
@@ -330,9 +551,10 @@ def generate_lattice(N, e, m):
                 delete_index.append(index)
         index += 1
 
+    # print some stats
     print('\n==> deleting {} columns with 0'.format(len(delete_index)))
     matrix = matrix.delete_columns(delete_index)
     print('==> finished deleting colums')
 
-    #print(matrix)
+    # return the lattice and its multigrade-column-relation
     return matrix, col_indice
