@@ -12,7 +12,6 @@ import sys
 
 from numpy import floor, ceil
 from sympy import Symbol, Poly, QQ, pprint
-from sympy.polys.polymatrix import PolyMatrix
 
 
 def index_set_x_stages(m, t, x):
