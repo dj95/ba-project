@@ -6,10 +6,13 @@
 # CRT-RSA attack of Takayusa, Lu and Peng utilizing
 # the coppersmith and L3 algorithm.
 #
-# (c) 2017 - Daniel Jankowski
+# (c) 2018 - Daniel Jankowski
 
 
-def h_odd(i1, i2, j1, j2, u, N, e ,m):
+def h(i1, i2, j1, j2, u, N, e ,m):
+    """
+    The first shift polunomial with the substitutions.
+    """
     # define the integer ring and its variables
     R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
 
@@ -46,16 +49,6 @@ def h_odd(i1, i2, j1, j2, u, N, e ,m):
 
                         # add the monom to the polynom
                         p += monom
-    # return it
-    return p
-
-
-def h_even(i1, i2, j1, j2, u, N, e ,m):
-    # define the integer ring and its variables
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
-
-    # initialize the polynom
-    p = 0
 
     # for loops simulate the sums
     for ip in range(0, int(floor((i1 + i2) / 2)) + 1):

@@ -6,43 +6,48 @@
 # CRT-RSA attack of Takayusa, Lu and Peng utilizing
 # the coppersmith and L3 algorithm.
 #
-# (c) 2017 - Daniel Jankowski
+# (c) 2018 - Daniel Jankowski
 
 
 def main():
     """
     The main function of this application and the entrypoint for it.
     """
+    # import sage modules
+    load('./argparser.sage')
+    load('./coppersmith.sage')
+    load('./keygen.sage')
+    load('./print.sage')
+    load('./test.sage')
+
+    # parse arguments
+    delta, m, bit_length, tau = parse_args()
+
     # print a logo
     print('#####################################')
     print('# Attack an small CRT-RSA exponents #')
     print('#####################################')
     print('')
 
-    # import sage modules
-    load('./coppersmith.sage')
-    load('./test.sage')
-    load('./keygen.sage')
-
     # test the lll algorithm
     #test_lll_reduction()
 
     # generate a complete crt-rsa keyset with the given parameters
     keys = generate_keys(
-            bit_length=1024,
-            delta=0.010
+            bit_length=bit_length,
+            delta=delta
             )
 
     # generate the lattice for our parameters
     matrix, col_indice = generate_lattice(
             keys['N'],
             keys['e'],
-            8
+            m,
+            tau
             )
 
     #NOTE: check the dimension: in the paper its 180 for m=8
     print('\n==> Got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
-    print('==> Reducing matrix with LLL-algorithm')
 
     # invert the colum index relation
     inverted_col_indice = {}
@@ -50,7 +55,12 @@ def main():
         inverted_col_indice[col_indice[index]] = index
     inverted_col_indice
 
+    #NOTE: debugging purpose
+    ones_matrix = matrix_to_ones(matrix, N)
+    print_matrix(matrix)
+
     # reduce it
+    print('==> Reducing matrix with LLL-algorithm')
     reduced_matrix = matrix.LLL()
 
     # define the polynomial ring
@@ -78,10 +88,10 @@ def main():
             # set the correct grade to the variables of each monomial
             x_p_1 = xp1^int(monom_grade[0])
             x_p_2 = xp2^int(monom_grade[1])
-            x_q_1 = xq1^int(monom_grade[2])
-            x_q_2 = xq2^int(monom_grade[3])
-            y_p = yp^int(monom_grade[4])
-            y_q = yq^int(monom_grade[5])
+            y_q = yq^int(monom_grade[2])
+            y_p = yp^int(monom_grade[3])
+            x_q_1 = xq1^int(monom_grade[4])
+            x_q_2 = xq2^int(monom_grade[5])
 
             # add the monomial myltyplied with its coefficient to the polunomial
             p += coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
@@ -90,8 +100,8 @@ def main():
         # groebner basis
         polynom_vector.append(p)
 
-    #TODO: check if the groebner basis is correct or should I use the resultant
-    #      algorithm
+    #TODO: implement howgrave-graham lemma in order to get polynoms, which are
+    #      small enough
 
     # create an ideal out of the polunomial vector
     I = Ideal(polynom_vector)

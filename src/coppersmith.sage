@@ -6,7 +6,7 @@
 # CRT-RSA attack of Takayusa, Lu and Peng utilizing
 # the coppersmith and L3 algorithm.
 #
-# (c) 2017 - Daniel Jankowski
+# (c) 2018 - Daniel Jankowski
 
 
 import sys 
@@ -15,7 +15,7 @@ from numpy import floor, ceil
 from sympy import Symbol, Poly, QQ, pprint
 
 
-def generate_lattice(N, e, m):
+def generate_lattice(N, e, m=8, tau=0.75):
     """
     Generate the lattice for the coppersmith variant of
     the given attack.
@@ -36,18 +36,18 @@ def generate_lattice(N, e, m):
     print('==> Processing index set x')
 
     # initialize the generator for the last index set
-    I_x = index_set_x(8, 0.75)
+    I_x = index_set_x(m, tau)
 
     # iterate through the last first set
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
         # calculate the polynomial for the index set
-        p = h_odd(i1, i2, j1, j2, u, N, e ,m)
-        p += h_even(i1, i2, j1, j2, u, N, e ,m)
+        p = h(i1, i2, j1, j2, u, N, e ,m)
 
         # avoid rows with 0 only
         if p == 0:
+            print(p)
             continue
 
         coeffs[count] = {}
@@ -62,7 +62,7 @@ def generate_lattice(N, e, m):
     print('==> Processing index set y p')
 
     # initialize the generator for the last index set
-    I_y_p = index_set_y_p(8, 0.75)
+    I_y_p = index_set_y_p(m, tau)
 
     # iterate through the second index set
     for (i1, i2, j1) in I_y_p:
@@ -73,6 +73,7 @@ def generate_lattice(N, e, m):
 
         # avoid rows with 0 only
         if p == 0:
+            print(p)
             continue
 
         coeffs[count] = {}
@@ -90,7 +91,7 @@ def generate_lattice(N, e, m):
     print('==> Processing index set y q\n')
 
     # initialize the generator for the last index set
-    I_y_q = index_set_y_q(8, 0.75)
+    I_y_q = index_set_y_q(m, tau)
 
     # iterate through the last index set
     for (i1, i2, j2) in I_y_q:
@@ -101,6 +102,7 @@ def generate_lattice(N, e, m):
 
         # avoid rows with 0 only
         if p == 0:
+            print(p)
             continue
 
         coeffs[count] = {}

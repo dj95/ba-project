@@ -6,7 +6,7 @@
 # CRT-RSA attack of Takayusa, Lu and Peng utilizing
 # the coppersmith and L3 algorithm.
 #
-# (c) 2017 - Daniel Jankowski
+# (c) 2018 - Daniel Jankowski
 
 
 def index_set_x_stages(m, t, x):

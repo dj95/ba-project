@@ -6,7 +6,7 @@
 # CRT-RSA attack of Takayusa, Lu and Peng utilizing
 # the coppersmith and L3 algorithm.
 #
-# (c) 2017 - Daniel Jankowski
+# (c) 2018 - Daniel Jankowski
 
 
 from Crypto.Util import number
@@ -23,8 +23,9 @@ def generate_keys(bit_length=1024, delta=0.090):
     load('./utils.sage')
 
     # generate primes for rsa
-    p = number.getStrongPrime(bit_length // 2, 6)
-    q = number.getStrongPrime(bit_length // 2, 6)
+    p = number.getPrime(int(bit_length // 2))
+    q = number.getPrime(int(bit_length // 2))
+    #q = number.getPrime(bit_length // 2)
 
     # calculate the N
     N = p * q
