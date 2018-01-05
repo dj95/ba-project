@@ -14,28 +14,14 @@ from functools import reduce
 from math import log
 
 
-def sqm(a, e, m):
-    """
-    Calculate a**e mod m with square and multiply.
-    """
-    bitlen = len(bin(e)[2:])
-    c = a
-    bitlen -= 1
-
-    while bitlen > 0:
-        bitlen -= 1
-        c = (c * c) % m
-        mul = ((e >> bitlen) & 0x1)
-        if mul:
-            c = (c * a) % m
-    return c
-
-
 def generate_keys(bit_length=1024, delta=0.090):
     """
     Generate p, q, N, dp, dq, d, e for CRT-RSA with
     small dp and dq for the given bit size.
     """
+    # load required functions from other sage files
+    load('./utils.sage')
+
     # generate primes for rsa
     p = number.getStrongPrime(bit_length // 2, 6)
     q = number.getStrongPrime(bit_length // 2, 6)
@@ -67,6 +53,7 @@ def generate_keys(bit_length=1024, delta=0.090):
                 'dq': dq
                 }
     except ZeroDivisionError:
+        # if no inverse exists, start all over again
         keys = generate_keys(bit_length)
 
     return keys
@@ -79,12 +66,16 @@ def check_parameters(N, e, d):
     to verify the RSA-parameters. If the decrypted and generated
     message are equal, this function return True.
     """
+    # generate a random message
     message = number.getRandomInteger(number.size(N) - int(2))
 
+    # encrypt the message with e
     encrypted_message = sqm(message, e, N)
 
+    # encrypt the message with d
     decrypted_message = sqm(encrypted_message, d, N)
 
+    # check if encrypted and decrypted message are equal
     if message == decrypted_message:
         return True
     else:

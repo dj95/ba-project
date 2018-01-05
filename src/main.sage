@@ -25,7 +25,7 @@ def main():
     load('./keygen.sage')
 
     # test the lll algorithm
-    test_lll_reduction()
+    #test_lll_reduction()
 
     # generate a complete crt-rsa keyset with the given parameters
     keys = generate_keys(
@@ -89,6 +89,9 @@ def main():
         # append the polunomial to the polunomial vector for calculating the 
         # groebner basis
         polynom_vector.append(p)
+
+    #TODO: check if the groebner basis is correct or should I use the resultant
+    #      algorithm
 
     # create an ideal out of the polunomial vector
     I = Ideal(polynom_vector)
