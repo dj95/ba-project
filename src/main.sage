@@ -68,8 +68,11 @@ def main():
     # define the polynomial ring
     R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
 
-    pol = xq1 + 3 * yp*(yq^2) + 2*xp1
-    substitute_y(pol, keys['N'])
+    pol = xq1 + 3 * yp*(yq^2)*xp1
+    pol = substitute_y(pol, keys['N'])
+    print(pol)
+    pol = substitute_x(pol)
+    print(pol)
     return
 
     # initialize an array for the polynomials
