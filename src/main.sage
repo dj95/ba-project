@@ -18,6 +18,7 @@ def main():
     load('./coppersmith.sage')
     load('./keygen.sage')
     load('./print.sage')
+    load('./substitute.sage')
     load('./test.sage')
 
     # parse arguments
@@ -65,7 +66,11 @@ def main():
     reduced_matrix = matrix.LLL()
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yq, yp> = PolynomialRing(ZZ)
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    pol = xq1 + 3 * yp*(yq^2) + 2*xp1
+    substitute_y(pol, keys['N'])
+    return
 
     # initialize an array for the polynomials
     polynom_vector = []
