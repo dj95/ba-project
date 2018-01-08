@@ -57,7 +57,8 @@ def main():
 
     #NOTE: debugging purpose
     ones_matrix = matrix_to_ones(matrix, N)
-    print_matrix(matrix)
+    sorted_matrix = matrix_sort_stairs(ones_matrix)
+    print_matrix(sorted_matrix)
 
     # reduce it
     print('==> Reducing matrix with LLL-algorithm')
@@ -76,6 +77,9 @@ def main():
 
         # reset the column index
         col_index = 0
+
+        # initialize variables for howgrave graham theorem
+        howgrave_sum = 0
 
         # iterate through all values of the row
         for coefficient in row:
@@ -96,12 +100,16 @@ def main():
             # add the monomial myltyplied with its coefficient to the polunomial
             p += coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
 
-        # append the polunomial to the polunomial vector for calculating the 
-        # groebner basis
-        polynom_vector.append(p)
+            # add the absolute value of the coefficient squared for howgrave
+            # grahams theorem
+            howgrave_sum += abs(coefficient)^2
 
-    #TODO: implement howgrave-graham lemma in order to get polynoms, which are
-    #      small enough
+        # howgrave-grahams lemma in order to get polynoms, which are
+        # small enough
+        if sqrt(howgrave_sum) < ((e^m) / sqrt(reduced_matrix.ncols())):
+            # append the polynomial to the polunomial vector for calculating the
+            # groebner basis
+            polynom_vector.append(p)
 
     # create an ideal out of the polunomial vector
     I = Ideal(polynom_vector)

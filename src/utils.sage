@@ -9,6 +9,56 @@
 # (c) 2018 - Daniel Jankowski
 
 
+def matrix_sort_stairs(matrix):
+    """
+    Sort the matrix rows that they form steps or a triangle.
+    """
+    # initialize some variables for work
+    work_matrix = []
+    row_index = {}
+
+    counter = -1
+    # convert matrix object to array matrix
+    for row in matrix:
+        # append a new row for every row
+        work_matrix.append([])
+        counter += 1
+
+        # append the values to each row
+        for value in row:
+            work_matrix[counter].append(value)
+
+    # append an index to each row
+    for row in work_matrix:
+        index = 0
+
+        # iterate through the columns
+        for i in range(len(row)):
+            # set the index to the column count of the value in order to save
+            # the highest column count of an existing monom
+            if row[i] != 0:
+                index = i
+
+        # append the index to each row
+        row.append(index)
+
+    sorted_matrix = []
+
+    # sort the matrix with the index
+    # iterate through all possible indices
+    for i in range(len(work_matrix[0])):
+        # iterate through all columns of the matrix
+        for row in work_matrix:
+            # check if the index is i
+            if row[-1:][0] == i:
+                # remove the index and append the row
+                row = row[:-1]
+                sorted_matrix.append(row)
+
+    # return it
+    return sorted_matrix
+
+
 def tupel_to_string(tupel):
     """
     Concatenate all values of a tupel to one string.
