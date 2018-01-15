@@ -107,7 +107,7 @@ def main():
     # iterate through the rows of the reduced coefficient matrix
     for row in matrix:
         # initialize the polunomial for each row
-        p = 1
+        p = 0
 
         # reset the column index
         col_index = 0
