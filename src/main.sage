@@ -55,7 +55,7 @@ def main():
     print('\n==> Got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
 
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ, order='lex')
 
     # checking polynomials
     polynomial_count, correct_count = len(polynomials), 0
@@ -144,17 +144,22 @@ def main():
 
     #polynom_vector = polynom_vector[:len(polynom_vector)/10]
 
+    p_v = []
+    for i in range(6):
+        p_v.append(polynom_vector[i])
+
+
     #print(polynom_vector)
 
     print('==> Create ideal from {} polynoms'.format(len(polynom_vector)))
 
     # create an ideal out of the polunomial vector
-    I = Ideal(polynom_vector)
+    I = ideal(p_v)
 
     print('==> Calculate groebner basis')
 
     # calculate the groebner basis
-    B = I.groebner_basis()
+    B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
 
     # print the basis
     print(B)
