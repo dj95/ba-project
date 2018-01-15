@@ -52,6 +52,16 @@ def generate_lattice(N, e, m=8, tau=0.75):
 
         #p = g(i1, i2, j1, j2, u, N, e, m)
 
+        new_red_p = substitute_N(p, N)
+        while True:
+            red_p = substitute_N(new_red_p, N)
+
+            if new_red_p != red_p:
+                new_red_p = red_p
+            else:
+                break
+        p = new_red_p
+
         #print('')
         polynomials.append((p, 1, (i1, i2, j1, j2, u)))
 
@@ -83,6 +93,16 @@ def generate_lattice(N, e, m=8, tau=0.75):
         #print(p)
         
         #p = g_p_check(i1, i2, j1, N, e, m, True)
+
+        new_red_p = substitute_N(p, N)
+        while True:
+            red_p = substitute_N(new_red_p, N)
+
+            if new_red_p != red_p:
+                new_red_p = red_p
+            else:
+                break
+        p = new_red_p
 
         #p = gp(i1, i2, j1, N, e, m)
         #print(p)
@@ -123,6 +143,16 @@ def generate_lattice(N, e, m=8, tau=0.75):
         #p = g_q_check(i1, i2, j2, N, e, m)
         #p = gq(i1, i2, j2, N, e, m)
         #print(p)
+
+        new_red_p = substitute_N(p, N)
+        while True:
+            red_p = substitute_N(new_red_p, N)
+
+            if new_red_p != red_p:
+                new_red_p = red_p
+            else:
+                break
+        p = new_red_p
 
         #print('')
         polynomials.append((p, 3, (i1, i2, j2)))

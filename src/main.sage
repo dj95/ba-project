@@ -126,9 +126,11 @@ def main():
             # grahams theorem
             howgrave_sum += abs(coefficient)^2
 
+        #print(p)
+
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((e^m) / sqrt(reduced_matrix.ncols())) and p != 1:
+        if sqrt(howgrave_sum) < ((e^m) / sqrt(reduced_matrix.ncols())):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)

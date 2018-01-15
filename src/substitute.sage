@@ -147,3 +147,33 @@ def substitute_x(polynomial):
 
     # return it
     return output_polynomial
+
+
+def substitute_N(polynomial, N):
+    """
+    Substitute N = 1
+    """
+    # get the polynomial as dict with multigrade => coefficient relation
+    polynomial_dict = polynomial.dict()
+
+    # initialize the output polynomial
+    output_polynomial = 0
+
+    # define the polynomial ring
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    reduce = True
+    
+    # iterate through every monomes multigrade
+    for multigrade in polynomial_dict:
+        # save the coefficient to the monome
+        monome = polynomial_dict[multigrade]
+
+        if (monome % N) != 0:
+            reduce = False
+
+    if reduce:
+        polynomial = polynomial / N
+
+    # return it
+    return polynomial
