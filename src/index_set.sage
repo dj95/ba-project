@@ -49,7 +49,7 @@ def index_set_x_stages(m, t, x):
                 # calculate the values for the next call
                 i2, u = i2 + 1, -1
             # calculate the values for the next call
-            i1, i2, u = i1 + 1, 0, -1
+            i1, i2, u = i1 + 1, 1, -1
     elif x == 3:
         # initial values
         i1, i2, j1, j2 = 0, 0, 1, 0
@@ -67,7 +67,7 @@ def index_set_x_stages(m, t, x):
                 # calculate the values for the next call
                 j1, u = j1 + 1, -1
             # calculate the values for the next call
-            i1, j1, u = i1 + 1, 0, -1
+            i1, j1, u = i1 + 1, 1, -1
     elif x == 4:
         # initial values
         i1, i2, j1, j2 = 0, 0, 0, 1
@@ -85,7 +85,7 @@ def index_set_x_stages(m, t, x):
                 # calculate the values for the next call
                 j2, u = j2 + 1, -1
             # calculate the values for the next call
-            i2, j2, u = i2 + 1, 0, -1
+            i2, j2, u = i2 + 1, 1, -1
 
 
 def index_set_x(m, t):

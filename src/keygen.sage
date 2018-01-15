@@ -34,15 +34,19 @@ def generate_keys(bit_length=1024, delta=0.090):
     # small dp's and dq's
     boundary = N ** delta
 
-    # ger random smal dp and dq with the calculated boundary
+    # get random smal dp and dq with the calculated boundary
     dp = number.getRandomInteger(number.size(int(boundary)))
     dq = number.getRandomInteger(number.size(int(boundary)))
 
-    d = crt(dp, dq, p, q)
-
     # get the related e to our d
     try:
+        d = crt(dp, dq, p - 1, q - 1)
+
         e = inverse_mod(d, (p - 1) * (q - 1))
+
+        # calculate the kq and kp  
+        kp = ((e*dp) - 1) /  (p - 1)
+        kq = ((e*dq) - 1) /  (q - 1)
 
         keys = {
                 'p': p,
@@ -51,10 +55,19 @@ def generate_keys(bit_length=1024, delta=0.090):
                 'e': e,
                 'd': d,
                 'dp': dp,
-                'dq': dq
+                'dq': dq,
+                'kp': kp,
+                'kq': kq
                 }
+
+        if kp == 0 or kq == 0:
+            keys = generate_keys(bit_length)
+
     except ZeroDivisionError:
         # if no inverse exists, start all over again
+        keys = generate_keys(bit_length)
+    except ValueError:
+        # if kq or kp is 0, start all over again
         keys = generate_keys(bit_length)
 
     return keys

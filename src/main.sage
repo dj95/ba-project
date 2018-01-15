@@ -8,7 +8,6 @@
 #
 # (c) 2018 - Daniel Jankowski
 
-
 def main():
     """
     The main function of this application and the entrypoint for it.
@@ -18,6 +17,8 @@ def main():
     load('./coppersmith.sage')
     load('./keygen.sage')
     load('./print.sage')
+    load('./polynomials.sage')
+    load('./shiftpolynomials.sage')
     load('./substitute.sage')
     load('./test.sage')
 
@@ -39,8 +40,11 @@ def main():
             delta=delta
             )
 
+    print('==> e*dp = 1 + {}(p - 1)'.format(keys['kp']))
+    print('==> e*dq = 1 + {}(q - 1)'.format(keys['kq']))
+
     # generate the lattice for our parameters
-    matrix, col_indice = generate_lattice(
+    matrix, col_indice, polynomials = generate_lattice(
             keys['N'],
             keys['e'],
             m,
@@ -49,6 +53,26 @@ def main():
 
     #NOTE: check the dimension: in the paper its 180 for m=8
     print('\n==> Got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
+
+    # define the polynomial ring
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # checking polynomials
+    polynomial_count, correct_count = len(polynomials), 0
+    for p, set_count, index_set in polynomials:
+        y = p(
+            xp1=keys['kq'] - 1,
+            xp2=keys['kp'],
+            xq1=keys['kq'],
+            xq2=keys['kq'] - 1,
+            yp=keys['p'],
+            yq=keys['q']
+            ) % keys['e']
+        correct_count += 1
+        #print('\r==> [{}/{}] polynomials have the correct zero'.format(correct_count, polynomial_count)),
+        print('  -> {} {} {} : {}'.format(correct_count, set_count, index_set, y))
+    print('')
+
 
     # invert the colum index relation
     inverted_col_indice = {}
@@ -64,16 +88,6 @@ def main():
     # reduce it
     print('==> Reducing matrix with LLL-algorithm')
     reduced_matrix = matrix.LLL()
-
-    # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
-
-    pol = xq1 + 3 * yp*(yq^2)*xp1
-    pol = substitute_y(pol, keys['N'])
-    print(pol)
-    pol = substitute_x(pol)
-    print(pol)
-    return
 
     # initialize an array for the polynomials
     polynom_vector = []
@@ -114,10 +128,13 @@ def main():
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((e^m) / sqrt(reduced_matrix.ncols())):
+        if sqrt(howgrave_sum) < ((e^m) / sqrt(reduced_matrix.ncols())) and p != 1:
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
+
+    print(polynom_vector)
+
 
     # create an ideal out of the polunomial vector
     I = Ideal(polynom_vector)

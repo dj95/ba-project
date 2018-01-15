@@ -25,6 +25,8 @@ def generate_lattice(N, e, m=8, tau=0.75):
     # load required functions from other sage files
     load('./equations.sage')
     load('./index_set.sage')
+    load('./shiftpolynomials.sage')
+    load('./substitute.sage')
     load('./utils.sage')
 
     R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
@@ -32,6 +34,7 @@ def generate_lattice(N, e, m=8, tau=0.75):
     # initial values
     coeffs = {}
     count = 0
+    polynomials = []
 
     print('==> Processing index set x')
 
@@ -43,7 +46,14 @@ def generate_lattice(N, e, m=8, tau=0.75):
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
         # calculate the polynomial for the index set
-        p = h(i1, i2, j1, j2, u, N, e ,m)
+        p = h_eq(i1, i2, j1, j2, u, N, e ,m)
+        #print(p)
+        #p = h_u_check(i1, i2, j1, j2, u, N, e ,m)
+
+        #p = g(i1, i2, j1, j2, u, N, e, m)
+
+        #print('')
+        polynomials.append((p, 1, (i1, i2, j1, j2, u)))
 
         # avoid rows with 0 only
         if p == 0:
@@ -70,6 +80,15 @@ def generate_lattice(N, e, m=8, tau=0.75):
         
         # calculate the polynomial for the index set
         p = g_p(i1, i2, j1, N, e, m)
+        #print(p)
+        
+        #p = g_p_check(i1, i2, j1, N, e, m, True)
+
+        #p = gp(i1, i2, j1, N, e, m)
+        #print(p)
+        polynomials.append((p, 2, (i1, i2, j1)))
+
+        #print('')
 
         # avoid rows with 0 only
         if p == 0:
@@ -96,9 +115,17 @@ def generate_lattice(N, e, m=8, tau=0.75):
     # iterate through the last index set
     for (i1, i2, j2) in I_y_q:
         #print('  -> (i1, i2, j2) = ({}, {}, {})'.format(i1, i2, j2))
-       
+
         # calculate the polynomial for the index set
         p = g_q(i1, i2, j2, N, e ,m)
+        #print(p)
+        
+        #p = g_q_check(i1, i2, j2, N, e, m)
+        #p = gq(i1, i2, j2, N, e, m)
+        #print(p)
+
+        #print('')
+        polynomials.append((p, 3, (i1, i2, j2)))
 
         # avoid rows with 0 only
         if p == 0:
@@ -145,6 +172,8 @@ def generate_lattice(N, e, m=8, tau=0.75):
             for monom in coeffs[polynom]:
                 # get the index from the monom grade
                 col = col_indice[monom]
+
+                #TODO: check shift polynomials dependencies
                 
                 # set the depending cell of the matrix to the coefficient
                 matrix[row, col] = long(coeffs[polynom][monom])
@@ -179,4 +208,4 @@ def generate_lattice(N, e, m=8, tau=0.75):
     print('==> finished deleting colums')
 
     # return the lattice and its multigrade-column-relation
-    return matrix, col_indice
+    return matrix, col_indice, polynomials

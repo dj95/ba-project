@@ -9,7 +9,7 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def h(i1, i2, j1, j2, u, N, e ,m):
+def h_eq(i1, i2, j1, j2, u, N, e ,m):
     """
     The first shift polunomial with the substitutions.
     """
@@ -84,7 +84,158 @@ def h(i1, i2, j1, j2, u, N, e ,m):
     return p
 
 
-def g_p(i1, i2, j1, N, e, m):
+def h_u_check(i1, i2, j1, j2, u, N, e, m):
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+
+    for ip in range(int(floor((i1 + i2) / 2)) + 1, i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for l in range(0, u + 1):
+                # initialize the monom
+                monom = 1
+
+                monom *= (-1)^(2*ip1 + i2 - ip + u - l)
+
+                monom *= binomial(i2, ip - ip1)
+                monom *= binomial(i1, ip1)
+                monom *= binomial(u, l)
+
+                monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + l)
+                monom *= e^(m - (i1 + i2 + u))
+
+                monom *= xp1^(ip1 + j1 + u - l)
+                monom *= xp2^(ip - ip1 + j2 + l)
+                monom *= xq1^(i1 - ip1 + l)
+                monom *= xq2^(i2 - ip + ip1 + u - l)
+                monom *= yp^(ip - int(floor((i1 + i2) / 2)))
+
+                p += monom
+
+    for ip in range(0, int(floor((i1 + i2) / 2)) + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            for l in range(0, u + 1):
+                # initialize the monom
+                monom = 1
+    
+                monom *= (-1)^(2*ip1 + i2 - ip + u - l)
+    
+                monom *= binomial(i2, ip - ip1)
+                monom *= binomial(i1, ip1)
+                monom *= binomial(u, l)
+    
+                monom *= N^(i1 - ip1 + ip + l)
+                monom *= e^(m - (i1 + i2 + u))
+    
+                monom *= xp1^(ip1 + j1 + u - l)
+                monom *= xp2^(ip - ip1 + j2 + l)
+                monom *= xq1^(i1 - ip1 + l)
+                monom *= xq2^(i2 - ip + ip1 + u - l)
+                monom *= yq^(int(floor((i1 + i2) / 2)) - ip)
+    
+                p += monom
+
+    return p
+
+
+def g_p_check_before_y_sub(i1, i2, j1, N, e, m):
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+
+    for ip in range(0, i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            monom = 1
+
+            monom *= (-1)^(2*ip1 + i2 - ip)
+
+            monom *= binomial(i2, ip - ip1)
+            monom *= binomial(i1, ip1)
+
+            monom *= N^(i1 - ip1)
+            monom *= e^(m - (i1 + i2))
+
+            monom *= xp1^(ip1)
+            monom *= xp2^(ip - ip1)
+            monom *= xq1^(i1 - ip1)
+            monom *= xq2^(i2 - ip + ip1)
+            monom *= yp^(ip)
+            monom *= yq^(int(floor((i1 + i2) / 2)) - j1)
+
+            p += monom
+    return p
+
+
+def g_p_check(i1, i2, j1, N, e, m, substitute=True):
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+
+    for ip in range(int(floor((i1 + i2) / 2) - j1 + 1), i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            monom = 1
+
+            monom *= (-1)^(2*ip1 + i2 - ip)
+
+            monom *= binomial(i2, ip - ip1)
+            monom *= binomial(i1, ip1)
+
+            #TODO: fehler
+            #monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+
+            # korrekter Exponent fuer N
+            monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) - j1)
+            monom *= e^(m - (i1 + i2))
+
+            monom *= xp1^(ip1)
+            monom *= xp2^(ip - ip1)
+
+            if substitute:
+                monom *= (xp1 + 1)^(i1 - ip1)
+                monom *= (xp2 - 1)^(i2 - ip + ip1)
+            else:
+                monom *= xq1^(i1 - ip1)
+                monom *= xq2^(i2 - ip + ip1)
+
+            monom *= yp^(ip - int(floor((i1 + i2) / 2)) + j1)
+
+            p += monom
+
+    for ip in range(0, int(floor((i1 + i2) / 2)) - j1 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            monom = 1
+
+            monom *= (-1)^(2*ip1 + i2 - ip)
+
+            monom *= binomial(i2, ip - ip1)
+            monom *= binomial(i1, ip1)
+
+            monom *= N^(i1 - ip1 + ip)
+            monom *= e^(m - (i1 + i2))
+
+            if substitute:
+                monom *= (xq1 - 1)^(ip1)
+                monom *= (xq2 + 1)^(ip - ip1)
+            else:
+                monom *= xp1^(ip1)
+                monom *= xp2^(ip - ip1)
+
+            monom *= xq1^(i1 - ip1)
+            monom *= xq2^(i2 - ip + ip1)
+
+            monom *= yq^(int(floor((i1 + i2) / 2)) - ip - j1)
+
+            p += monom
+    return p
+
+
+def g_p(i1, i2, j1, N, e, m): 
     """
     Calculate the second shift polunomial with all substitutions
     like in the proof on page 31/32.
@@ -113,7 +264,7 @@ def g_p(i1, i2, j1, N, e, m):
                     monom *= binomial(i2 - ip + ip1, kp2)
 
                     # multiply N and e to the coefficient
-                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) - j1)
                     monom *= e^(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
@@ -156,6 +307,59 @@ def g_p(i1, i2, j1, N, e, m):
     return p
 
 
+def g_q_check(i1, i2, j2, N, e, m):
+    # define the integer ring and its variables
+    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+
+    # initialize the polynom
+    p = 0
+
+    for ip in range(int(floor((i1 + i2) / 2) + j2 + 1), i1 + i2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            monom = 1
+
+            monom *= (-1)^(2*ip1 + i2 - ip)
+
+            monom *= binomial(i2, ip - ip1)
+            monom *= binomial(i1, ip1)
+
+            #TODO: fehler
+            #monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+
+            # korrekter Exponent fuer N
+            monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + j2)
+            monom *= e^(m - (i1 + i2))
+
+            monom *= xp1^(ip1)
+            monom *= xp2^(ip - ip1)
+            monom *= xq1^(i1 - ip1)
+            monom *= xq2^(i2 - ip + ip1)
+            monom *= yp^(ip - int(floor((i1 + i2) / 2)) - j2)
+
+            p += monom
+
+    for ip in range(0, int(floor((i1 + i2) / 2)) + j2 + 1):
+        for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
+            monom = 1
+
+            monom *= (-1)^(2*ip1 + i2 - ip)
+
+            monom *= binomial(i2, ip - ip1)
+            monom *= binomial(i1, ip1)
+
+            monom *= N^(i1 - ip1 + ip)
+            monom *= e^(m - (i1 + i2))
+
+            monom *= xp1^(ip1)
+            monom *= xp2^(ip - ip1)
+            monom *= xq1^(i1 - ip1)
+            monom *= xq2^(i2 - ip + ip1)
+            monom *= yq^(int(floor((i1 + i2) / 2)) - ip + j2)
+
+            p += monom
+    return p
+
+
 def g_q(i1, i2, j2, N, e, m):
     """
     Calculate the third shift polunomial with all substitutions
@@ -186,7 +390,8 @@ def g_q(i1, i2, j2, N, e, m):
                     monom *= binomial(i2 - ip + ip1, kp2)
 
                     # multiply N and e to the coefficient
-                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+                    #monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + j2)
                     monom *= e^(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
