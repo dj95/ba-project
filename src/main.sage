@@ -70,8 +70,8 @@ def main():
             ) % keys['e']
         correct_count += 1
         #print('\r==> [{}/{}] polynomials have the correct zero'.format(correct_count, polynomial_count)),
-        print('  -> {} {} {} : {}'.format(correct_count, set_count, index_set, y))
-    print('')
+        #print('  -> {} {} {} : {}'.format(correct_count, set_count, index_set, y))
+    print('==> {}/{} polynoms have the correct zero\n'.format(correct_count, polynomial_count))
 
 
     # invert the colum index relation
@@ -88,6 +88,7 @@ def main():
     # reduce it
     print('==> Reducing matrix with LLL-algorithm')
     reduced_matrix = matrix.LLL()
+    print('==> Got the reduced matrix')
 
     # initialize an array for the polynomials
     polynom_vector = []
@@ -103,6 +104,8 @@ def main():
         # initialize variables for howgrave graham theorem
         howgrave_sum = 0
 
+        monome_count = 0
+
         # iterate through all values of the row
         for coefficient in row:
             # get the monome grade from the column index
@@ -110,6 +113,9 @@ def main():
 
             # increase the column index for the next column
             col_index += 1
+
+            if coefficient != 0:
+                monome_count += 1
 
             # set the correct grade to the variables of each monomial
             x_p_1 = xp1^int(monom_grade[0])
@@ -127,19 +133,25 @@ def main():
             howgrave_sum += abs(coefficient)^2
 
         #print(p)
+        #print('==> Checking {} < {}'.format(sqrt(howgrave_sum), ((e^m) / sqrt(reduced_matrix.ncols()))))
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((e^m) / sqrt(reduced_matrix.ncols())):
+        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(monome_count)):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
 
-    print(polynom_vector)
+    #polynom_vector = polynom_vector[:len(polynom_vector)/10]
 
+    #print(polynom_vector)
+
+    print('==> Create ideal from {} polynoms'.format(len(polynom_vector)))
 
     # create an ideal out of the polunomial vector
     I = Ideal(polynom_vector)
+
+    print('==> Calculate groebner basis')
 
     # calculate the groebner basis
     B = I.groebner_basis()
