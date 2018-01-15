@@ -9,6 +9,55 @@
 # (c) 2018 - Daniel Jankowski
 
 
+from colorama import Fore, Back, Style
+
+
+def pprint(text):
+    """
+    Pretty print the text with colors
+    """
+    print(Fore.BLUE + '==>' + Fore.RESET + ' ' + text)
+
+
+def root_check(polynomials, keys, debug):
+    """
+    Check if every polynomial in polynomials has the roots at
+    the correct places in mod e
+    """
+    # initialize helper variables
+    polynomial_count, correct_count = len(polynomials), 0
+
+    # iterate through polynomials
+    for p in polynomials:
+        # calculate the y value with key parameters
+        y = p(
+            xp1=keys['kq'] - 1,
+            xp2=keys['kp'],
+            xq1=keys['kq'],
+            xq2=keys['kq'] - 1,
+            yp=keys['p'],
+            yq=keys['q']
+            ) % keys['e']
+
+        # if we found a root, raise the counter
+        if y == 0:
+            correct_count += 1
+        else:
+            if debug:
+                print(p)
+
+    # if all polynomials share the roots
+    if correct_count == polynomial_count:
+        # return true
+        return True
+
+    # log output
+    pprint('{} wrong roots'.format(polynomial_count - correct_count))
+
+    # else return false
+    return False
+
+
 def matrix_sort_stairs(matrix):
     """
     Sort the matrix rows that they form steps or a triangle.

@@ -15,13 +15,11 @@ from numpy import floor, ceil
 from sympy import Symbol, Poly, QQ, pprint
 
 
-def generate_lattice(N, e, m=8, tau=0.75):
+def generate_lattice(N, e, m=8, tau=0.75, debug=False):
     """
     Generate the lattice for the coppersmith variant of
     the given attack.
     """
-    print('==> generate lattice')
-
     # load required functions from other sage files
     load('./equations.sage')
     load('./index_set.sage')
@@ -35,8 +33,6 @@ def generate_lattice(N, e, m=8, tau=0.75):
     coeffs = {}
     count = 0
     polynomials = []
-
-    print('==> Processing index set x')
 
     # initialize the generator for the last index set
     I_x = index_set_x(m, tau)
@@ -78,8 +74,6 @@ def generate_lattice(N, e, m=8, tau=0.75):
 
         # increase the counter
         count += 1
-
-    print('==> Processing index set y p')
 
     # initialize the generator for the last index set
     I_y_p = index_set_y_p(m, tau)
@@ -127,8 +121,6 @@ def generate_lattice(N, e, m=8, tau=0.75):
         # increase the counter
         count += 1
 
-    print('==> Processing index set y q\n')
-
     # initialize the generator for the last index set
     I_y_q = index_set_y_q(m, tau)
 
@@ -175,7 +167,7 @@ def generate_lattice(N, e, m=8, tau=0.75):
         # increase the counter
         count += 1
 
-    print('==> Got {} index sets'.format(count))
+    pprint('got {} index sets'.format(count))
 
     c = 0
     col_indice = {}
@@ -217,10 +209,6 @@ def generate_lattice(N, e, m=8, tau=0.75):
 
     # iterate through columns
     for col in matrix.columns():
-        # debug
-        sys.stdout.write('\r==> Checking column {}/{}'.format(index + 1, cols))
-        sys.stdout.flush()
-        
         # iterate through every row of the column
         for i in range(rows):
             # if we have no 0, skip to the next column
@@ -232,10 +220,13 @@ def generate_lattice(N, e, m=8, tau=0.75):
                 delete_index.append(index)
         index += 1
 
+    if len(delete_index) == 0:
+        pprint("column check            [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+    else:
+        pprint("column check            [" + Fore.RED + " failed " + Fore.RESET + "]") 
+
     # print some stats
-    print('\n==> deleting {} columns with 0'.format(len(delete_index)))
     matrix = matrix.delete_columns(delete_index)
-    print('==> finished deleting colums')
 
     # return the lattice and its multigrade-column-relation
     return matrix, col_indice, polynomials
