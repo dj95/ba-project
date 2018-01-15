@@ -29,7 +29,7 @@ def generate_lattice(N, e, m=8, tau=0.75):
     load('./substitute.sage')
     load('./utils.sage')
 
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     # initial values
     coeffs = {}

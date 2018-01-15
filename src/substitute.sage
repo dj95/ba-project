@@ -20,7 +20,7 @@ def substitute_y(polynomial, N):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     # iterate through the multigrades
     for multigrade in polynomial_dict:
@@ -30,10 +30,10 @@ def substitute_y(polynomial, N):
         # save the exponents of yq and yp for the substitution
         exp_xp1 = multigrade[0]
         exp_xp2 = multigrade[1]
-        exp_yq = multigrade[2]
-        exp_yp = multigrade[3]
-        exp_xq1 = multigrade[4]
-        exp_xq2 = multigrade[5]
+        exp_xq1 = multigrade[2]
+        exp_xq2 = multigrade[3]
+        exp_yp = multigrade[4]
+        exp_yq = multigrade[5]
 
         #print('[sub|y] -> {} {} {} {} {} {}'.format(exp_xp1, exp_xp2, exp_yq, exp_yp, exp_xq1, exp_xq2))
 
@@ -90,7 +90,7 @@ def substitute_x(polynomial):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     # iterate through every monomes multigrade
     for multigrade in polynomial_dict:
@@ -100,10 +100,10 @@ def substitute_x(polynomial):
         # sort exponents from multigrade
         exp_xp1 = multigrade[0]
         exp_xp2 = multigrade[1]
-        exp_yq = multigrade[2]
-        exp_yp = multigrade[3]
-        exp_xq1 = multigrade[4]
-        exp_xq2 = multigrade[5]
+        exp_xq1 = multigrade[2]
+        exp_xq2 = multigrade[3]
+        exp_yp = multigrade[4]
+        exp_yq = multigrade[5]
 
         # initial grades for xp and xq
         xp = xp1^exp_xp1 * xp2^exp_xp2
@@ -160,7 +160,7 @@ def substitute_N(polynomial, N):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     reduce = True
     

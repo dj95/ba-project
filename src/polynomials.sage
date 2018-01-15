@@ -11,7 +11,7 @@
 
 def h(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     #TODO: validate by hand
     polynomial = (N*xp2*xq1 - xp1*xq2)
@@ -21,7 +21,7 @@ def h(N):
 
 def fp1(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     polynomial = N + xp1*(N - yp)
 
@@ -30,7 +30,7 @@ def fp1(N):
 
 def fp2(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     polynomial = 1 + xp2*(yp - 1)
 
@@ -39,7 +39,7 @@ def fp2(N):
 
 def fq1(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     polynomial = 1 + xq1*(yq - 1)
 
@@ -48,7 +48,7 @@ def fq1(N):
 
 def fq2(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     polynomial = N + xq2*(N - yq)
 
@@ -57,7 +57,7 @@ def fq2(N):
 
 def fp1_sub_xp1(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     polynomial = (N*xq1 - xp1*yp)
 
@@ -66,7 +66,7 @@ def fp1_sub_xp1(N):
 
 def fp2_sub_xp2(N):
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ)
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     polynomial = (-xq2 + xp2*yp)
 

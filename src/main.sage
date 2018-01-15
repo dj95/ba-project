@@ -55,7 +55,7 @@ def main():
     print('\n==> Got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
 
     # define the polynomial ring
-    R.<xp1, xp2, yq, yp, xq1, xq2> = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
 
     # checking polynomials
     polynomial_count, correct_count = len(polynomials), 0
@@ -120,10 +120,10 @@ def main():
             # set the correct grade to the variables of each monomial
             x_p_1 = xp1^int(monom_grade[0])
             x_p_2 = xp2^int(monom_grade[1])
-            y_q = yq^int(monom_grade[2])
-            y_p = yp^int(monom_grade[3])
-            x_q_1 = xq1^int(monom_grade[4])
-            x_q_2 = xq2^int(monom_grade[5])
+            x_q_1 = xq1^int(monom_grade[2])
+            x_q_2 = xq2^int(monom_grade[3])
+            y_p = yp^int(monom_grade[4])
+            y_q = yq^int(monom_grade[5])
 
             # add the monomial myltyplied with its coefficient to the polunomial
             p += coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
@@ -159,7 +159,7 @@ def main():
     print('==> Calculate groebner basis')
 
     # calculate the groebner basis
-    B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
+    B = I.groebner_basis(algorithm='libsingular:stdfglm', prot=True)
 
     # print the basis
     print(B)
