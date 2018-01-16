@@ -71,7 +71,7 @@ def parse_args():
             )
     parser.add_argument(
             '--noreduction',
-            help='Skip the groebner basis',
+            help='Skip the lll reduction',
             dest='noreduction',
             action='store_const',
             const=True,
