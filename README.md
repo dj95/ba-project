@@ -27,7 +27,7 @@ This repository contiains the project for my bachelor thesis.
     --debug        Print debug messages
     --test         Test the LLL algorithm
     --nogroebner   Skip the groebner basis
-    --noreduction  Skip the groebner basis
+    --noreduction  Skip the LLL reduction
 
   ```
 
