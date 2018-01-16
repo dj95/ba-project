@@ -108,8 +108,8 @@ def h_u_check(i1, i2, j1, j2, u, N, e, m):
 
                 monom *= xp1^(ip1 + j1 + u - l)
                 monom *= xp2^(ip - ip1 + j2 + l)
-                monom *= xq1^(i1 - ip1 + l)
-                monom *= xq2^(i2 - ip + ip1 + u - l)
+                monom *= (xp1 + 1)^(i1 - ip1 + l)
+                monom *= (xp2 - 1)^(i2 - ip + ip1 + u - l)
                 monom *= yp^(ip - int(floor((i1 + i2) / 2)))
 
                 p += monom
@@ -129,8 +129,8 @@ def h_u_check(i1, i2, j1, j2, u, N, e, m):
                 monom *= N^(i1 - ip1 + ip + l)
                 monom *= e^(m - (i1 + i2 + u))
     
-                monom *= xp1^(ip1 + j1 + u - l)
-                monom *= xp2^(ip - ip1 + j2 + l)
+                monom *= (xq1 - 1)^(ip1 + j1 + u - l)
+                monom *= (xq2 + 1)^(ip - ip1 + j2 + l)
                 monom *= xq1^(i1 - ip1 + l)
                 monom *= xq2^(i2 - ip + ip1 + u - l)
                 monom *= yq^(int(floor((i1 + i2) / 2)) - ip)

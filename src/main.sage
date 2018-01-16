@@ -83,10 +83,6 @@ def main():
     else:
         pprint("root check              [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
-    print(polynomials_tuple[13][0])
-    print(polynomials_tuple[13][1])
-    print(polynomials_tuple[13][2])
-
     # invert the colum index relation
     inverted_col_indice = {}
     for index in col_indice:
@@ -114,7 +110,7 @@ def main():
     counter = -1
 
     # iterate through the rows of the reduced coefficient matrix
-    for row in matrix.rows():
+    for row in reduced_matrix.rows():
         # initialize the polunomial for each row
         p = 0
 
@@ -159,7 +155,7 @@ def main():
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(reduced_matrix.ncols())):
+        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(monome_count)):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)

@@ -42,10 +42,10 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
         # calculate the polynomial for the index set
-        p = h_eq(i1, i2, j1, j2, u, N, e ,m)
+        #p = h_eq(i1, i2, j1, j2, u, N, e ,m)
 
         #print(p)
-        #p = h_u_check(i1, i2, j1, j2, u, N, e ,m)
+        p = h_u_check(i1, i2, j1, j2, u, N, e ,m)
         #p = g(i1, i2, j1, j2, u, N, e, m)
 
         new_red_p = substitute_N(p, N)
