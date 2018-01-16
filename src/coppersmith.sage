@@ -9,12 +9,6 @@
 # (c) 2018 - Daniel Jankowski
 
 
-import sys 
-
-from numpy import floor, ceil
-from sympy import Symbol, Poly, QQ, pprint
-
-
 def generate_lattice(N, e, m=8, tau=0.75, debug=False):
     """
     Generate the lattice for the coppersmith variant of
