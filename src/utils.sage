@@ -12,6 +12,25 @@
 from colorama import Fore, Back, Style
 
 
+def evaluate_polynom(p, keys):
+    poly = p.dict()
+    
+    y = 0
+
+    for monom in poly:
+        x_p_1 = (keys['kq'] - 1)^int(monom[0])
+        x_p_2 = (keys['kp'])^int(monom[1])
+        x_q_1 = (keys['kq'])^int(monom[2])
+        x_q_2 = (keys['kp'] - 1)^int(monom[3])
+        y_p = (keys['p'])^int(monom[4])
+        y_q = (keys['q'])^int(monom[5])
+
+        value = poly[monom] * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
+        y += value
+
+    return y
+
+
 def pprint(text):
     """
     Pretty print the text with colors
@@ -27,23 +46,23 @@ def root_check(polynomials, keys, debug):
     # initialize helper variables
     polynomial_count, correct_count = len(polynomials), 0
 
+    counter = 0
+
     # iterate through polynomials
     for p in polynomials:
         # calculate the y value with key parameters
-        y = p(
-            xp1=keys['kq'] - 1,
-            xp2=keys['kp'],
-            xq1=keys['kq'],
-            xq2=keys['kq'] - 1,
-            yp=keys['p'],
-            yq=keys['q']
-            ) % keys['e']
+        y = evaluate_polynom(p, keys)
+
+        y = y % keys['e']
+
+        counter += 1
 
         # if we found a root, raise the counter
         if y == 0:
             correct_count += 1
         else:
             if debug:
+                print(counter)
                 print(p)
 
     # if all polynomials share the roots

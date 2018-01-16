@@ -39,6 +39,9 @@ def main():
             delta=delta
             )
 
+    # define the polynomial ring
+    R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='lex')
+
     # print some stats
     pprint('generated crt-rsa parameters')
     pprint('N = {}'.format(keys['N']))
@@ -66,7 +69,7 @@ def main():
         pprint("squared matrix          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
         pprint("squared matrix          [" + Fore.RED + " failed " + Fore.RESET + "]") 
-        pprint('[' + Fore.RED + ' ERROR ' + Fore.RESET + ']got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
+        pprint('[' + Fore.RED + ' ERROR ' + Fore.RESET + '] got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
 
     # define the polynomial ring
     R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
@@ -79,6 +82,10 @@ def main():
         pprint("root check              [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
         pprint("root check              [" + Fore.RED + " failed " + Fore.RESET + "]") 
+
+    print(polynomials_tuple[13][0])
+    print(polynomials_tuple[13][1])
+    print(polynomials_tuple[13][2])
 
     # invert the colum index relation
     inverted_col_indice = {}
@@ -104,10 +111,14 @@ def main():
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
 
+    counter = -1
+
     # iterate through the rows of the reduced coefficient matrix
-    for row in matrix:
+    for row in matrix.rows():
         # initialize the polunomial for each row
         p = 0
+
+        counter += 1
 
         # reset the column index
         col_index = 0
@@ -143,15 +154,15 @@ def main():
             # grahams theorem howgrave_sum += abs(coefficient)^2
             howgrave_sum += abs(coefficient)^2
 
+        # append the polynomials to the reduced polynomials array
+        reduced_polynomials.append(p)
+
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(monome_count)):
+        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(reduced_matrix.ncols())):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
-
-        # append the polynomials to the reduced polynomials array
-        reduced_polynomials.append(p)
 
     # check the roots of the reduced polynomials
     if root_check(reduced_polynomials, keys, debug):

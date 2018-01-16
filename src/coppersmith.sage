@@ -43,9 +43,9 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
 
         # calculate the polynomial for the index set
         p = h_eq(i1, i2, j1, j2, u, N, e ,m)
+
         #print(p)
         #p = h_u_check(i1, i2, j1, j2, u, N, e ,m)
-
         #p = g(i1, i2, j1, j2, u, N, e, m)
 
         new_red_p = substitute_N(p, N)
@@ -58,13 +58,12 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
                 break
         p = new_red_p
 
-        #print('')
-        polynomials.append((p, 1, (i1, i2, j1, j2, u)))
-
         # avoid rows with 0 only
         if p == 0:
             print(p)
             continue
+
+        polynomials.append((p, 1, (i1, i2, j1, j2, u)))
 
         coeffs[count] = {}
 
@@ -88,6 +87,10 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         
         #p = g_p_check(i1, i2, j1, N, e, m, True)
 
+        #p = gp(i1, i2, j1, N, e, m)
+        #print(p)
+        #print('')
+
         new_red_p = substitute_N(p, N)
         while True:
             red_p = substitute_N(new_red_p, N)
@@ -98,25 +101,18 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
                 break
         p = new_red_p
 
-        #p = gp(i1, i2, j1, N, e, m)
-        #print(p)
-        polynomials.append((p, 2, (i1, i2, j1)))
-
-        #print('')
-
         # avoid rows with 0 only
         if p == 0:
             print(p)
             continue
 
+        polynomials.append((p, 2, (i1, i2, j1)))
+
         coeffs[count] = {}
 
         # save the multigrade as dict in base-m
         for monom in p.dict():
-            # sort the multigrade that we have the grades vor xp1 xp2 yp1 yp2 xq1 xq2
-            monom_string = tupel_to_string(monom)
-
-            coeffs[count][monom_string] = p.dict()[monom]
+            coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
         # increase the counter
         count += 1
@@ -146,44 +142,37 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
                 break
         p = new_red_p
 
-        #print('')
-        polynomials.append((p, 3, (i1, i2, j2)))
-
         # avoid rows with 0 only
         if p == 0:
             print(p)
             continue
 
+        polynomials.append((p, 3, (i1, i2, j2)))
+
         coeffs[count] = {}
 
         # save the multigrade as dict in base-m
         for monom in p.dict():
-            # sort the multigrade that we have the grades vor xp1 xp2 yp1 yp2 xq1 xq2
-            monom_string = tupel_to_string(monom)
-
-            # save the mulitgrade
-            coeffs[count][monom_string] = p.dict()[monom]
+            # save the multigrade
+            coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
         # increase the counter
         count += 1
 
     pprint('got {} index sets'.format(count))
 
-    c = 0
     col_indice = {}
     col_index = 0
     # get the polynom count for every polynom with at least one monom
     # this prevents rows with 0 only
     for polynom in sorted(list(coeffs.keys())):
-        if len(coeffs[polynom]) > 0:
-            c += 1
         for monom in coeffs[polynom]:
             if monom not in col_indice:
                 col_indice[monom] = col_index
                 col_index += 1
 
     # initialize the matrix
-    matrix = Matrix(c, col_index)
+    matrix = Matrix(len(coeffs), col_index)
 
     row = 0
     # iterate through the polynoms we save before
