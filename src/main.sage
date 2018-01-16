@@ -27,7 +27,7 @@ def main():
     load('./test.sage')
 
     # parse arguments
-    delta, m, bit_length, tau, debug, test, nogroebner = parse_args()
+    delta, m, bit_length, tau, debug, test, nogroebner, noreduction = parse_args()
 
     # test the lll algorithm
     if test:
@@ -96,13 +96,17 @@ def main():
     #print_matrix(sorted_matrix)
 
     # reduce it
-    try:
-        reduced_matrix = matrix.LLL()
-    except:
-        pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
-        return
+    if not noreduction:
+        try:
+            reduced_matrix = matrix.LLL()
+        except:
+            pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
+            return
 
-    pprint("LLL-reduction           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        pprint("LLL-reduction           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+    else:
+        pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
+        reduced_matrix = matrix
 
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
@@ -155,7 +159,7 @@ def main():
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(monome_count)):
+        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(reduced_matrix.ncols())):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
