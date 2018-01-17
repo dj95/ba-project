@@ -89,12 +89,6 @@ def main():
         inverted_col_indice[col_indice[index]] = index
     inverted_col_indice
 
-    #NOTE: debugging purpose
-    #TODO: debug flag
-    #ones_matrix = matrix_to_ones(matrix, N)
-    #sorted_matrix = matrix_sort_stairs(ones_matrix)
-    #print_matrix(sorted_matrix)
-
     # reduce it
     if not noreduction:
         try:
@@ -112,6 +106,12 @@ def main():
     else:
         pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
         reduced_matrix = matrix
+
+    #NOTE: debugging purpose
+    #TODO: debug flag
+    #ones_matrix = matrix_to_ones(matrix, N)
+    #sorted_matrix = matrix_sort_stairs(ones_matrix)
+    #print_matrix(sorted_matrix)
 
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []

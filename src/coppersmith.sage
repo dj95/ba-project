@@ -35,6 +35,10 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
+        # skip (0, 0, 0, 0, 0):
+        #if (i1, i2, j1, j2, u) == (0, 0, 0, 0, 0):
+        #    continue
+
         # calculate the polynomial for the index set
         #p = h_eq(i1, i2, j1, j2, u, N, e ,m)
 
