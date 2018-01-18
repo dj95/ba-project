@@ -66,7 +66,7 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m):
                         monom *= binomial(i2, ip - ip1)
                         monom *= binomial(i1, ip1)
                         monom *= binomial(u, l)
-                        monom *= binomial(ip1 + j1 + u - l, kq2)
+                        monom *= binomial(ip1 + j1 + u - l, kq1)
                         monom *= binomial(ip + j2 + l - ip1, kq2)
 
                         # multiply N and e to the coefficient

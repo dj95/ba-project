@@ -67,7 +67,7 @@ def generate_keys(bit_length=1024, delta=0.090):
         # if no inverse exists, start all over again
         keys = generate_keys(bit_length)
     except ValueError:
-        # if kq or kp is 0, start all over again
+        # if crt does not work
         keys = generate_keys(bit_length)
 
     return keys

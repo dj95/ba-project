@@ -56,7 +56,7 @@ def index_set_x_stages(m, t, x):
         u = -1
 
         # let the generator work until we hit the boundary
-        while i1 <= floor(m / 2) - 1:
+        while i1 <= floor(m / 2):
             # iterate through all i2 to the boundary and increase i1 if we hit it
             while j1 <= (floor(m / 2) - i1):
                 # if j2 is in the boundary, return
@@ -74,7 +74,7 @@ def index_set_x_stages(m, t, x):
         u = -1
 
         # let the generator work until we hit the boundary
-        while i2 <= floor(m / 2) - 1:
+        while i2 <= floor(m / 2):
             # iterate through all i2 to the boundary and increase i1 if we hit it
             while j2 <= (floor(m / 2) - i2):
                 # if j2 is in the boundary, return
