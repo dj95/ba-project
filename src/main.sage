@@ -97,10 +97,7 @@ def main():
     # reduce it
     if not noreduction:
         try:
-            reduced_matrix = matrix.LLL(
-                    algorithm='NTL:LLL',
-                    fp='fp'
-                    )
+            reduced_matrix = matrix.LLL()
         except Exception as e:
             pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
             print(e)
@@ -194,35 +191,38 @@ def main():
         B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
 
         # print the basis
-        print(B)
+        #print(B)
 
-        #equations = []
-        #x1, x2, y1, y2 = var('x1 x2 y1 y2')
+        equations = []
+        x1, x2, y1, y2 = var('x1 x2 y1 y2')
 
-        #for row in B:
-            #print(row)
+        for row in B:
+            print(row % keys['e'])
             #print(row.dict())
             
             #if len(row.dict()) == 1:
-            #    for i in range(keys['N']):
-            #        print(row(xq1=i) % keys['e'])
-
-        #    eq1 = 0
-
-         #   for monom in substitute_xp(row).dict():
-         #       m = substitute_xp(row).dict()[monom] * x1^monom[2] * x2^monom[3] * y1^monom[4] * y2^monom[5]
-
-         #       eq1 += m
-
-         #   eq = eq1 == 0 % keys['e']
-
-         #   equations.append(eq)
-
-        #for row in equations:
-        #    print(row)
-
-
-        #print(solve(equations, x1, x2, y1, y2))
+            #    print(row % keys['e'])
+#            if (row % keys['e']) == 0:
+#                continue
+#
+#            row = row % keys['e']
+#
+#            eq1 = 0
+#
+#            for monom in substitute_xp(row).dict():
+#                m = substitute_xp(row).dict()[monom] * x1^monom[2] * x2^monom[3] * y1^monom[4] * y2^monom[5]
+#
+#                eq1 += m
+#
+#            eq = eq1 == 0
+#
+#            equations.append(eq)
+3
+#        for row in equations:
+#            print(row)
+#
+#
+#        print(solve(equations, x1, x2, y1, y2))
 
 
 # execute the main function, if the script is called on the commandline
