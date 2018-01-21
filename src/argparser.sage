@@ -77,6 +77,22 @@ def parse_args():
             const=True,
             default=False
             )
+    parser.add_argument(
+            '--forcetriangle',
+            help='Force a triangular matrix',
+            dest='forcetriangle',
+            action='store_const',
+            const=True,
+            default=False
+            )
+    parser.add_argument(
+            '--print',
+            help='Print the matrix to tech',
+            dest='printmatrix',
+            action='store_const',
+            const=True,
+            default=False
+            )
     
     #TODO: add testing flag
 
@@ -84,4 +100,4 @@ def parse_args():
     args = parser.parse_args()
 
     # and return them
-    return args.d, args.m, args.s, args.t, args.debug, args.test, args.nogroebner, args.noreduction
+    return args.d, args.m, args.s, args.t, args.debug, args.test, args.nogroebner, args.noreduction, args.forcetriangle, args.printmatrix

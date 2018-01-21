@@ -149,6 +149,54 @@ def substitute_x(polynomial):
     return output_polynomial
 
 
+def substitute_xp(polynomial):
+    """
+    Substitute xq1 = xp1 + 1
+               xq2 = xp2 - 1
+    """
+    # get the polynomial as dict with multigrade => coefficient relation
+    polynomial_dict = polynomial.dict()
+
+    # initialize the output polynomial
+    output_polynomial = 0
+
+    # define the polynomial ring
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+
+    # iterate through every monomes multigrade
+    for multigrade in polynomial_dict:
+        # save the coefficient to the monome
+        monome = polynomial_dict[multigrade]
+
+        # sort exponents from multigrade
+        exp_xp1 = multigrade[0]
+        exp_xp2 = multigrade[1]
+        exp_xq1 = multigrade[2]
+        exp_xq2 = multigrade[3]
+        exp_yp = multigrade[4]
+        exp_yq = multigrade[5]
+
+
+        # replace xp in this monome by xq
+        xq = (xq1 - 1)^exp_xp1 * (xq2 + 1)^exp_xp2 * xq1^exp_xq1 * xq2^exp_xq2
+
+        # set xp to 1
+        xp = 1
+        #else:
+        
+        # build the correct grade
+        monome *= xp
+        monome *= yq^exp_yq
+        monome *= yp^exp_yp
+        monome *= xq
+
+        # add monome to the output polynomial
+        output_polynomial += monome
+
+    # return it
+    return output_polynomial
+
+
 def substitute_N(polynomial, N):
     """
     Substitute N = 1

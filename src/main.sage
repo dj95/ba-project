@@ -27,7 +27,7 @@ def main():
     load('./test.sage')
 
     # parse arguments
-    delta, m, bit_length, tau, debug, test, nogroebner, noreduction = parse_args()
+    delta, m, bit_length, tau, debug, test, nogroebner, noreduction, forcetriangle, printmatrix = parse_args()
 
     # test the lll algorithm
     if test:
@@ -50,6 +50,8 @@ def main():
     pprint('dq = {}'.format(keys['dq']))
     pprint('p = {}'.format(keys['p']))
     pprint('q = {}'.format(keys['q']))
+    pprint('kp = {}'.format(keys['kp']))
+    pprint('kq = {}'.format(keys['kq']))
     pprint('|N| = {} Bit'.format(bit_length))
 
     pprint('starting coppersmith with')
@@ -89,12 +91,19 @@ def main():
         inverted_col_indice[col_indice[index]] = index
     inverted_col_indice
 
+    if forcetriangle:
+        matrix = Matrix(matrix_triangulate(matrix, keys['e'], m))
+
     # reduce it
     if not noreduction:
         try:
-            reduced_matrix = matrix.LLL()
-        except:
+            reduced_matrix = matrix.LLL(
+                    algorithm='NTL:LLL',
+                    fp='fp'
+                    )
+        except Exception as e:
             pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
+            print(e)
             return
 
         pprint("LLL-reduction           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
@@ -107,11 +116,11 @@ def main():
         pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
         reduced_matrix = matrix
 
-    #NOTE: debugging purpose
-    #TODO: debug flag
-    #ones_matrix = matrix_to_ones(matrix, N)
-    #sorted_matrix = matrix_sort_stairs(ones_matrix)
-    #print_matrix(sorted_matrix)
+    # it arg --print is true, print the matrix to tex file
+    if printmatrix:
+        ones_matrix = matrix_to_ones(reduced_matrix, keys['N'])
+        sorted_matrix = matrix_sort_stairs(ones_matrix)
+        print_matrix(reduced_matrix)
 
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
@@ -186,6 +195,34 @@ def main():
 
         # print the basis
         print(B)
+
+        #equations = []
+        #x1, x2, y1, y2 = var('x1 x2 y1 y2')
+
+        #for row in B:
+            #print(row)
+            #print(row.dict())
+            
+            #if len(row.dict()) == 1:
+            #    for i in range(keys['N']):
+            #        print(row(xq1=i) % keys['e'])
+
+        #    eq1 = 0
+
+         #   for monom in substitute_xp(row).dict():
+         #       m = substitute_xp(row).dict()[monom] * x1^monom[2] * x2^monom[3] * y1^monom[4] * y2^monom[5]
+
+         #       eq1 += m
+
+         #   eq = eq1 == 0 % keys['e']
+
+         #   equations.append(eq)
+
+        #for row in equations:
+        #    print(row)
+
+
+        #print(solve(equations, x1, x2, y1, y2))
 
 
 # execute the main function, if the script is called on the commandline
