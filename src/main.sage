@@ -105,10 +105,10 @@ def main():
 
         pprint("LLL-reduction           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
 
-        if reduced_matrix.is_LLL_reduced():
-            pprint("is LLL reduced          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-        else:
-            pprint("is LLL reduced          [" + Fore.RED + " failed " + Fore.RESET + "]") 
+        #if reduced_matrix.is_LLL_reduced():
+        #    pprint("is LLL reduced          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        #else:
+        #    pprint("is LLL reduced          [" + Fore.RED + " failed " + Fore.RESET + "]") 
     else:
         pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
         reduced_matrix = matrix
