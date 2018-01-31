@@ -9,9 +9,9 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def h(N):
+def h(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     #TODO: validate by hand
     polynomial = (N*xp2*xq1 - xp1*xq2)
@@ -19,54 +19,54 @@ def h(N):
     return polynomial
 
 
-def fp1(N):
+def fp1(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     polynomial = N + xp1*(N - yp)
 
     return polynomial
 
 
-def fp2(N):
+def fp2(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     polynomial = 1 + xp2*(yp - 1)
 
     return polynomial
 
 
-def fq1(N):
+def fq1(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     polynomial = 1 + xq1*(yq - 1)
 
     return polynomial
 
 
-def fq2(N):
+def fq2(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     polynomial = N + xq2*(N - yq)
 
     return polynomial
 
 
-def fp1_sub_xp1(N):
+def fp1_sub_xp1(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     polynomial = (N*xq1 - xp1*yp)
 
     return polynomial
 
 
-def fp2_sub_xp2(N):
+def fp2_sub_xp2(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     polynomial = (-xq2 + xp2*yp)
 

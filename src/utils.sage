@@ -25,7 +25,7 @@ def evaluate_polynom(p, keys):
         y_p = (keys['p'])^int(monom[4])
         y_q = (keys['q'])^int(monom[5])
 
-        value = poly[monom] * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
+        value = int(poly[monom]) * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
         y += value
 
     return y
@@ -38,7 +38,8 @@ def pprint(text):
     print(Fore.BLUE + '==>' + Fore.RESET + ' ' + text)
 
 
-def root_check(polynomials, keys, debug):
+
+def reduced_root_check(polynomials, keys, debug, m):
     """
     Check if every polynomial in polynomials has the roots at
     the correct places in mod e
@@ -51,9 +52,62 @@ def root_check(polynomials, keys, debug):
     # iterate through polynomials
     for p in polynomials:
         # calculate the y value with key parameters
-        y = evaluate_polynom(p, keys)
+        #y = evaluate_polynom(p, keys)
+        y = p(
+            xp1 = keys['kq'] - 1,
+            xp2 = keys['kp'],
+            xq1 = keys['kq'],
+            xq2 = keys['kp'] - 1,
+            yp = keys['p'],
+            yq = keys['q']
+            )
 
-        y = y % keys['e']
+        counter += 1
+
+        # if we found a root, raise the counter
+        if y == 0:
+            correct_count += 1
+        else:
+            if debug:
+                print(counter)
+                print(y)
+                #print(p)
+
+    # if all polynomials share the roots
+    if correct_count == polynomial_count:
+        # return true
+        return True
+
+    # log output
+    pprint('{} wrong roots'.format(polynomial_count - correct_count))
+
+    # else return false
+    return False
+
+
+def root_check(polynomials, keys, debug, m):
+    """
+    Check if every polynomial in polynomials has the roots at
+    the correct places in mod e
+    """
+    # initialize helper variables
+    polynomial_count, correct_count = len(polynomials), 0
+
+    counter = 0
+
+    # iterate through polynomials
+    for p in polynomials:
+        # calculate the y value with key parameters
+        y = p(
+            xp1 = int(keys['kq'] - 1),
+            xp2 = int(keys['kp']),
+            xq1 = int(keys['kq']),
+            xq2 = int(keys['kp'] - 1),
+            yp = int(keys['p']),
+            yq = int(keys['q'])
+            )
+
+        y = y % keys['e']^m
 
         counter += 1
 
@@ -280,7 +334,7 @@ def matrix_to_ones(matrix, N):
                 output_matrix[counter].append(0)
             elif row[i] < 0: # if its less than 0...
                 # ...append -1
-                output_matrix[counter].append(-1)
+                output_matrix[counter].append(1)
             elif row[i] > 0: # if its greater than 0...
                 # ...append 1
                 output_matrix[counter].append(1)

@@ -9,12 +9,25 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def print_matrix(matrix):
+def print_matrix(matrix, inverted_col_indice, row_index):
     """
     Print the matrix in TeX-format to a file.
     """
     # start the matrix in tex
     tex_string = '\\begin{bmatrix}\n'
+
+    # iterate through every value
+    for i in range(len(matrix[0])):
+        # append the value with the divider to the tex string
+        tex_string = '{} {} &'.format(tex_string, inverted_col_indice[i])
+
+        # increase the counter by 1
+        #counter += 1
+
+    # after each row, insert a new line and remove the last dividing character
+    tex_string = tex_string[:-1] + ' \\\\\n'
+    
+    r_counter = 0
 
     # iterate through every row of the matrix
     for row in matrix:
@@ -23,11 +36,20 @@ def print_matrix(matrix):
 
         # iterate through every value
         for value in row:
-            # append the value with the divider to the tex string
-            tex_string = '{} {} &'.format(tex_string, value)
+            if counter == r_counter:
+                # append the value with the divider to the tex string
+                tex_string = '{} {} &'.format(tex_string, value)
+            else:
+                # append the value with the divider to the tex string
+                tex_string = '{} {} &'.format(tex_string, value)
 
             # increase the counter by 1
             counter += 1
+
+        # append the value with the divider to the tex string
+        tex_string = '{} {} &'.format(tex_string, row_index[r_counter])
+
+        r_counter += 1
 
         # after each row, insert a new line and remove the last dividing character
         tex_string = tex_string[:-1] + ' \\\\\n'

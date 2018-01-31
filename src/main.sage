@@ -23,11 +23,12 @@ def main():
     load('./print.sage')
     load('./polynomials.sage')
     load('./shiftpolynomials.sage')
+    load('./sort.sage')
     load('./substitute.sage')
     load('./test.sage')
 
     # parse arguments
-    delta, m, bit_length, tau, debug, test, nogroebner, noreduction, forcetriangle, printmatrix = parse_args()
+    delta, m, bit_length, tau, debug, test, nogroebner, noreduction, forcetriangle, printmatrix, jsonoutput = parse_args()
 
     # test the lll algorithm
     if test:
@@ -40,50 +41,48 @@ def main():
             )
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='lp')
 
     # print some stats
-    pprint('generated crt-rsa parameters')
-    pprint('N = {}'.format(keys['N']))
-    pprint('e = {}'.format(keys['e']))
-    pprint('dp = {}'.format(keys['dp']))
-    pprint('dq = {}'.format(keys['dq']))
-    pprint('p = {}'.format(keys['p']))
-    pprint('q = {}'.format(keys['q']))
-    pprint('kp = {}'.format(keys['kp']))
-    pprint('kq = {}'.format(keys['kq']))
-    pprint('|N| = {} Bit'.format(bit_length))
+    if not jsonoutput:
+        pprint('generated crt-rsa parameters')
+        pprint('N = {}'.format(keys['N']))
+        pprint('e = {}'.format(keys['e']))
+        pprint('dp = {}'.format(keys['dp']))
+        pprint('dq = {}'.format(keys['dq']))
+        pprint('p = {}'.format(keys['p']))
+        pprint('q = {}'.format(keys['q']))
+        pprint('kp = {}'.format(keys['kp']))
+        pprint('kq = {}'.format(keys['kq']))
+        pprint('|N| = {} Bit'.format(bit_length))
 
-    pprint('starting coppersmith with')
-    pprint('m = {}    tau = {}'.format(m, tau))
+        pprint('starting coppersmith with')
+        pprint('m = {}    tau = {}'.format(m, tau))
 
     # generate the lattice for our parameters
-    matrix, col_indice, polynomials_tuple = generate_lattice(
+    matrix, col_indice, polynomials_tuple, row_index = generate_lattice(
             keys['N'],
             keys['e'],
             m,
             tau,
-            debug
+            debug,
+            jsonoutput
             )
 
     #NOTE: check the dimension: in the paper its 180 for m=8
     if matrix.nrows() == matrix.ncols():
-        pprint("squared matrix          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        if not jsonoutput:
+            pprint("squared matrix          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
-        pprint("squared matrix          [" + Fore.RED + " failed " + Fore.RESET + "]") 
-        pprint('[' + Fore.RED + ' ERROR ' + Fore.RESET + '] got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
+        if not jsonoutput:
+            pprint("squared matrix          [" + Fore.RED + " failed " + Fore.RESET + "]") 
+            pprint('[' + Fore.RED + ' ERROR ' + Fore.RESET + '] got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     # get polynomials from polynomials tuple
     polynomials = [value[0] for value in polynomials_tuple]
-
-    # check if the roots match
-    if root_check(polynomials, keys, debug):
-        pprint("root check              [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-    else:
-        pprint("root check              [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
     # invert the colum index relation
     inverted_col_indice = {}
@@ -94,30 +93,72 @@ def main():
     if forcetriangle:
         matrix = Matrix(matrix_triangulate(matrix, keys['e'], m))
 
+    matrix, inverted_col_indice, row_index = matrix_sort_triangle(matrix, inverted_col_indice, row_index)
+    matrix = substitute_N(matrix, keys['N'], keys['e'], m)
+
+    substituted_polynomials = []
+
+    # iterate through the rows of the reduced coefficient matrix
+    for row in matrix.rows():
+        # initialize the polunomial for each row
+        p = 0
+
+        # reset the column index
+        col_index = 0
+
+        # iterate through all values of the row
+        for coefficient in row:
+            # get the monome grade from the column index
+            monom_grade = inverted_col_indice[col_index]
+
+            # increase the column index for the next column
+            col_index += 1
+
+            # set the correct grade to the variables of each monomial
+            x_p_1 = xp1^int(monom_grade[0])
+            x_p_2 = xp2^int(monom_grade[1])
+            x_q_1 = xq1^int(monom_grade[2])
+            x_q_2 = xq2^int(monom_grade[3])
+            y_p = yp^int(monom_grade[4])
+            y_q = yq^int(monom_grade[5])
+
+            # add the monomial myltyplied with its coefficient to the polunomial
+            p += coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
+
+        # append the polynomials to the reduced polynomials array
+        substituted_polynomials.append(p)
+
+    # check if the roots match
+    if root_check(substituted_polynomials, keys, debug, m):
+        if not jsonoutput:
+            pprint("root check              [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+    else:
+        if not jsonoutput:
+            pprint("root check              [" + Fore.RED + " failed " + Fore.RESET + "]") 
+
     # reduce it
     if not noreduction:
         try:
-            reduced_matrix = matrix.LLL()
+            reduced_matrix = matrix.LLL(algorithm='fpLLL:proved', use_siegel=True)
         except Exception as e:
-            pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
-            print(e)
+            if not jsonoutput:
+                pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
+                print(e)
             return
 
-        pprint("LLL-reduction           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-
-        #if reduced_matrix.is_LLL_reduced():
-        #    pprint("is LLL reduced          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-        #else:
-        #    pprint("is LLL reduced          [" + Fore.RED + " failed " + Fore.RESET + "]") 
+        if not jsonoutput:
+            pprint("LLL-reduction           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
-        pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
+        if not jsonoutput:
+            pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
         reduced_matrix = matrix
 
     # it arg --print is true, print the matrix to tex file
     if printmatrix:
         ones_matrix = matrix_to_ones(reduced_matrix, keys['N'])
-        sorted_matrix = matrix_sort_stairs(ones_matrix)
-        print_matrix(reduced_matrix)
+        #sorted_matrix = matrix_sort_stairs(ones_matrix)
+        #sorted_matrix, inverted_col_indice = matrix_sort_triangle(ones_matrix, inverted_col_indice)
+        print_matrix(ones_matrix, inverted_col_indice, row_index)
 
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
@@ -176,53 +217,83 @@ def main():
             polynom_vector.append(p)
 
     # check the roots of the reduced polynomials
-    if root_check(reduced_polynomials, keys, debug):
-        pprint("reduced root check      [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+    if reduced_root_check(reduced_polynomials, keys, debug, m):
+        if not jsonoutput:
+            pprint("reduced root check      [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
-        pprint("reduced root check      [" + Fore.RED + " failed " + Fore.RESET + "]") 
+        if not jsonoutput:
+            pprint("reduced root check      [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
-    # create an ideal out of the polunomial vector
-    pprint('create ideal with {} polynoms'.format(len(polynom_vector)))
-    I = ideal(polynom_vector)
+    if not jsonoutput:
+    #    pprint("det(M) = {}".format(reduced_matrix.det()))
+    #    pprint("howgrave = {}".format(reduced_matrix.det() < keys['e']^(reduced_matrix.ncols() * m)))
+
+        # create an ideal out of the polunomial vector
+        pprint('create ideal with {} polynoms'.format(len(polynom_vector)))
+
+    #new_pv = []
+    #for p in polynom_vector:
+    #    new_pv.append(p(xp1 = (keys['kq'] - 1)))
+    #polynom_vector = new_pv
+
+    #print(polynom_vector)
+
+    # create an ideal from the polynom vector
+    I = Ideal(polynom_vector)
 
     # calculate the groebner basis
     if not nogroebner:
-        pprint('calculate groebner basis')
-        B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
+        if not jsonoutput:
+            pprint('calculate groebner basis')
+            B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
+        else:
+            B = I.groebner_basis(algorithm='libsingular:slimgb', prot=False)
 
         # print the basis
         #print(B)
+        if not jsonoutput:
+            pprint('basis length: {}'.format(len(B)))
+        # print json output
+        else:
+            output = {}
+            output['m'] = m
+            output['tau'] = tau
+            output['delta'] = delta
+            output['matrix_dimension'] = reduced_matrix.ncols()
+            output['no_errors'] = True
+            output['bit_length'] = bit_length
+            print(output)
 
         equations = []
-        x1, x2, y1, y2 = var('x1 x2 y1 y2')
+        x1, x2, x3, x4, y1, y2 = var('x1 x2 x3 x4 y1 y2')
 
+        #if len(B) >= 6:
         for row in B:
-            print(row % keys['e'])
+            if not jsonoutput:
+                print(row)
+
+
             #print(row.dict())
             
             #if len(row.dict()) == 1:
             #    print(row % keys['e'])
-#            if (row % keys['e']) == 0:
-#                continue
-#
-#            row = row % keys['e']
-#
-#            eq1 = 0
-#
-#            for monom in substitute_xp(row).dict():
-#                m = substitute_xp(row).dict()[monom] * x1^monom[2] * x2^monom[3] * y1^monom[4] * y2^monom[5]
-#
-#                eq1 += m
-#
-#            eq = eq1 == 0
-#
-#            equations.append(eq)
-3
-#        for row in equations:
-#            print(row)
-#
-#
-#        print(solve(equations, x1, x2, y1, y2))
+
+            eq1 = 0
+
+            for monom in row.dict():
+                print("{} - {}".format(monom, row.dict()[monom]))
+                m = row.dict()[monom] * x1^monom[0] * x2^monom[1] * y1^monom[4] * y2^monom[5] * x3^monom[2] * x4^monom[3]
+                eq1 += m
+
+            eq = eq1 == 0
+
+            equations.append(eq)
+
+        for row in equations:
+            print(row)
+
+
+        print(solve(equations, x1, x2, y1, y2))
 
 
 # execute the main function, if the script is called on the commandline

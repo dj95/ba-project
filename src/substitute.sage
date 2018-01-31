@@ -9,7 +9,7 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def substitute_y(polynomial, N):
+def substitute_y(polynomial, N, e, m):
     """
     Substitute yp*yq to N
     """
@@ -20,7 +20,7 @@ def substitute_y(polynomial, N):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     # iterate through the multigrades
     for multigrade in polynomial_dict:
@@ -78,11 +78,14 @@ def substitute_y(polynomial, N):
     return output_polynomial
 
 
-def substitute_x(polynomial):
+def substitute_x(polynomial, e, m):
     """
     Substitute xp1 = xq1 - 1
                xp2 = xq2 + 1
     """
+    if polynomial == 0:
+        return 0
+
     # get the polynomial as dict with multigrade => coefficient relation
     polynomial_dict = polynomial.dict()
 
@@ -90,7 +93,7 @@ def substitute_x(polynomial):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     # iterate through every monomes multigrade
     for multigrade in polynomial_dict:
@@ -127,14 +130,14 @@ def substitute_x(polynomial):
 
                 # set xp to 1
                 xp = 1
-        #else:
-        #    # if xp1 or xp2 exist in this monome
-        #    if exp_xp1 != 0 or exp_xp2 != 0:
-        #        # replace xp in this monome by xq
-        #        xq = (xq1 - 1)^exp_xp1 * (xq2 + 1)^exp_xp2 * xq1^exp_xq1 * xq2^exp_xq2
-        #
-        #        # set xp to 1
-        #        xp = 1
+        else:
+            # if xp1 or xp2 exist in this monome
+            if exp_xp1 != 0 or exp_xp2 != 0:
+                # replace xp in this monome by xq
+                xq = (xq1 - 1)^exp_xp1 * (xq2 + 1)^exp_xp2 * xq1^exp_xq1 * xq2^exp_xq2
+        
+                # set xp to 1
+                xp = 1
         
         # build the correct grade
         monome *= xp
@@ -161,7 +164,7 @@ def substitute_xp(polynomial):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     # iterate through every monomes multigrade
     for multigrade in polynomial_dict:
@@ -197,31 +200,14 @@ def substitute_xp(polynomial):
     return output_polynomial
 
 
-def substitute_N(polynomial, N):
-    """
-    Substitute N = 1
-    """
-    # get the polynomial as dict with multigrade => coefficient relation
-    polynomial_dict = polynomial.dict()
+def substitute_N(matrix, N, e, m):
+    em = e^m
 
-    # initialize the output polynomial
-    output_polynomial = 0
+    N_inv = inverse_mod(N, em)
 
-    # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    for i in range(matrix.ncols()):
+        while matrix[i][i] % N == 0:
+            for j in range(matrix.ncols()):
+                matrix[i, j] = (matrix[i, j] * N_inv) % em
 
-    reduce = True
-    
-    # iterate through every monomes multigrade
-    for multigrade in polynomial_dict:
-        # save the coefficient to the monome
-        monome = polynomial_dict[multigrade]
-
-        if (monome % N) != 0:
-            reduce = False
-
-    if reduce:
-        polynomial = polynomial / N
-
-    # return it
-    return polynomial
+    return matrix

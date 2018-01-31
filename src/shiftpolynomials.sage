@@ -14,11 +14,11 @@ def g(i1, i2, j1, j2, u, N, e, m):
     load('./substitute.sage')
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
-    fp1_val = fp1_sub_xp1(N)
-    fp2_val = fp2_sub_xp2(N)
-    h_val = h(N)
+    fp1_val = fp1_sub_xp1(N, e, m)
+    fp2_val = fp2_sub_xp2(N, e, m)
+    h_val = h(N, e, m)
 
     polynomial = 1
 
@@ -30,8 +30,11 @@ def g(i1, i2, j1, j2, u, N, e, m):
     polynomial *= h_val^u
     polynomial *= e^(m - (i1 + i2 + u))
 
-    polynomial = substitute_y(polynomial, N)
-    polynomial = substitute_x(polynomial)
+    if polynomial == 0:
+        return 0
+
+    polynomial = substitute_y(polynomial, N, e, m)
+    polynomial = substitute_x(polynomial, e, m)
 
     return polynomial
 
@@ -40,10 +43,10 @@ def gp(i1, i2, j1, N, e, m):
     load('./polynomials.sage')
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
-    fp1_val = fp1_sub_xp1(N)
-    fp2_val = fp2_sub_xp2(N)
+    fp1_val = fp1_sub_xp1(N, e, m)
+    fp2_val = fp2_sub_xp2(N, e, m)
 
     polynomial = 1
 
@@ -52,8 +55,8 @@ def gp(i1, i2, j1, N, e, m):
     polynomial *= (fp2_val)^i2
     polynomial *= e^(m - (i1 + i2))
 
-    polynomial = substitute_y(polynomial, N)
-    polynomial = substitute_x(polynomial)
+    polynomial = substitute_y(polynomial, N, e, m)
+    polynomial = substitute_x(polynomial, e, m)
 
     return polynomial
 
@@ -62,10 +65,10 @@ def gq(i1, i2, j2, N, e, m):
     load('./polynomials.sage')
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
-    fp1_val = fp1_sub_xp1(N)
-    fp2_val = fp2_sub_xp2(N)
+    fp1_val = fp1_sub_xp1(N, e, m)
+    fp2_val = fp2_sub_xp2(N, e, m)
 
     polynomial = 1
 
@@ -74,7 +77,7 @@ def gq(i1, i2, j2, N, e, m):
     polynomial *= fp2_val^i2
     polynomial *= e^(m - (i1 + i2))
 
-    polynomial = substitute_y(polynomial, N)
-    polynomial = substitute_x(polynomial)
+    polynomial = substitute_y(polynomial, N, e, m)
+    polynomial = substitute_x(polynomial, e, m)
 
     return polynomial

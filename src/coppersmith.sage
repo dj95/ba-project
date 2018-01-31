@@ -9,7 +9,7 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def generate_lattice(N, e, m=8, tau=0.75, debug=False):
+def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
     """
     Generate the lattice for the coppersmith variant of
     the given attack.
@@ -21,12 +21,13 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
     load('./substitute.sage')
     load('./utils.sage')
 
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lex')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
     # initial values
     coeffs = {}
     count = 0
     polynomials = []
+    N_inv = pow(N, -1, e^m)
 
     # initialize the generator for the last index set
     I_x = index_set_x(m, tau)
@@ -35,29 +36,21 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
     for (i1, i2, j1, j2, u) in I_x:
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
-        # skip (0, 0, 0, 0, 0):
-        #if (i1, i2, j1, j2, u) == (0, 0, 0, 0, 0):
-        #    continue
-
         # calculate the polynomial for the index set
-        p = h_eq(i1, i2, j1, j2, u, N, e ,m)
+        eq_p = h_eq(i1, i2, j1, j2, u, N, e ,m)
 
-        #print(p)
         #p = h_u_check(i1, i2, j1, j2, u, N, e ,m)
-        #p = g(i1, i2, j1, j2, u, N, e, m)
+        p = g(i1, i2, j1, j2, u, N, e, m)
 
-        new_red_p = substitute_N(p, N)
-        while True:
-            red_p = substitute_N(new_red_p, N)
+        if eq_p != p and not jsonoutput:
+            pprint('[ ERROR ] polynomial is not equal to equation')
 
-            if new_red_p != red_p:
-                new_red_p = red_p
-            else:
-                break
-        p = new_red_p
+        #p *= N_inv
 
         # avoid rows with 0 only
         if p == 0:
+            print((i1, i2, j1, j2, u))
+            p = e^m * xp1^i1 * xp2^i2 * xq1^i1 * xq2^i1
             print(p)
             continue
 
@@ -68,6 +61,13 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         # save the multigrade as dict in base-m
         for monom in p.dict():
             coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
+
+            if monom[4] > max(ceil((i1 + i2) / 2), 0):
+                print((i1, i2, j1, j2, u))
+                print(monom)
+                print("Error")
+            if monom[5] > max(((i1 + i2) / 2), 0):
+                print("Error")
 
         # increase the counter
         count += 1
@@ -80,24 +80,19 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         #print('  -> (i1, i2, j1) = ({}, {}, {})'.format(i1, i2, j1))
         
         # calculate the polynomial for the index set
-        p = g_p(i1, i2, j1, N, e, m)
+        eq_p = g_p(i1, i2, j1, N, e, m)
         #print(p)
         
         #p = g_p_check(i1, i2, j1, N, e, m, True)
 
-        #p = gp(i1, i2, j1, N, e, m)
+        p = gp(i1, i2, j1, N, e, m)
         #print(p)
         #print('')
 
-        new_red_p = substitute_N(p, N)
-        while True:
-            red_p = substitute_N(new_red_p, N)
+        if eq_p != p and not jsonoutput:
+            pprint('[ ERROR ] polynomial is not equal to equation')
 
-            if new_red_p != red_p:
-                new_red_p = red_p
-            else:
-                break
-        p = new_red_p
+        #p *= N_inv
 
         # avoid rows with 0 only
         if p == 0:
@@ -112,6 +107,11 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         for monom in p.dict():
             coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
+            if monom[4] > max(((i1 + i2) / 2) + j1, 0):
+                print("Error")
+            if monom[5] > max(((i1 + i2) / 2) - j1, 0):
+                print("Error")
+
         # increase the counter
         count += 1
 
@@ -123,22 +123,17 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         #print('  -> (i1, i2, j2) = ({}, {}, {})'.format(i1, i2, j2))
 
         # calculate the polynomial for the index set
-        p = g_q(i1, i2, j2, N, e ,m)
+        eq_p = g_q(i1, i2, j2, N, e ,m)
         #print(p)
         
         #p = g_q_check(i1, i2, j2, N, e, m)
-        #p = gq(i1, i2, j2, N, e, m)
+        p = gq(i1, i2, j2, N, e, m)
         #print(p)
 
-        new_red_p = substitute_N(p, N)
-        while True:
-            red_p = substitute_N(new_red_p, N)
+        if eq_p != p and not jsonoutput:
+            pprint('[ ERROR ] polynomial is not equal to equation')
 
-            if new_red_p != red_p:
-                new_red_p = red_p
-            else:
-                break
-        p = new_red_p
+        #p *= N_inv
 
         # avoid rows with 0 only
         if p == 0:
@@ -154,10 +149,16 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
             # save the multigrade
             coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
+            if monom[4] > max(ceil((i1 + i2) / 2) - j2, 0):
+                print("Error")
+            if monom[5] > max(((i1 + i2) / 2) + j2, 0):
+                print("Error")
+
         # increase the counter
         count += 1
 
-    pprint('got {} index sets'.format(count))
+    if not jsonoutput:
+        pprint('got {} index sets'.format(count))
 
     col_indice = {}
     col_index = 0
@@ -173,8 +174,11 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
     matrix = Matrix(len(coeffs), col_index)
 
     row = 0
+    row_index = []
+
     # iterate through the polynoms we save before
     for polynom in coeffs:
+        row_index.append(polynomials[row][1])
         # check if we have monoms
         if len(coeffs[polynom]) > 0:
             # iterate through every monom of the polynom
@@ -182,10 +186,9 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
                 # get the index from the monom grade
                 col = col_indice[monom]
 
-                #TODO: check shift polynomials dependencies
-                
                 # set the depending cell of the matrix to the coefficient
-                matrix[row, col] = long(coeffs[polynom][monom])
+                matrix[row, col] = coeffs[polynom][monom]
+
             row += 1
 
     # eliminate cols with 0
@@ -208,12 +211,14 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False):
         index += 1
 
     if len(delete_index) == 0:
-        pprint("column check            [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        if not jsonoutput:
+            pprint("column check            [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
-        pprint("column check            [" + Fore.RED + " failed " + Fore.RESET + "]") 
+        if not jsonoutput:
+            pprint("column check            [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
     # print some stats
     matrix = matrix.delete_columns(delete_index)
 
     # return the lattice and its multigrade-column-relation
-    return matrix, col_indice, polynomials
+    return matrix, col_indice, polynomials, row_index

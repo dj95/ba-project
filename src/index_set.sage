@@ -53,6 +53,9 @@ def index_set_x_stages(m, t, x):
     elif x == 3:
         # initial values
         i1, i2, j1, j2 = 0, 0, 1, 0
+
+        #TODO: testing
+        #i1, i2, j1, j2 = 0, 1, 1, 0
         u = -1
 
         # let the generator work until we hit the boundary
@@ -71,6 +74,9 @@ def index_set_x_stages(m, t, x):
     elif x == 4:
         # initial values
         i1, i2, j1, j2 = 0, 0, 0, 1
+
+        #TODO: testing
+        #i1, i2, j1, j2 = 1, 0, 0, 1
         u = -1
 
         # let the generator work until we hit the boundary
