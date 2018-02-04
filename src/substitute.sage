@@ -201,13 +201,20 @@ def substitute_xp(polynomial):
 
 
 def substitute_N(matrix, N, e, m):
+    # calculate e^m for the inverse
     em = e^m
 
+    # get the inverse of N in e^m
     N_inv = inverse_mod(N, em)
 
+    # iterate through the matrix
     for i in range(matrix.ncols()):
+        # while the matrix diagonals contains multiple of N
         while matrix[i][i] % N == 0:
+            # iterate through the columns
             for j in range(matrix.ncols()):
+                # and multiply it with N^(-1) mod e^m
                 matrix[i, j] = (matrix[i, j] * N_inv) % em
 
+    # return the matrix
     return matrix

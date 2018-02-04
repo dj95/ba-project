@@ -88,12 +88,11 @@ def main():
     inverted_col_indice = {}
     for index in col_indice:
         inverted_col_indice[col_indice[index]] = index
-    inverted_col_indice
 
-    if forcetriangle:
-        matrix = Matrix(matrix_triangulate(matrix, keys['e'], m))
-
+    # sort the matrix triangular
     matrix, inverted_col_indice, row_index = matrix_sort_triangle(matrix, inverted_col_indice, row_index)
+
+    # substitute N from the diagonal
     matrix = substitute_N(matrix, keys['N'], keys['e'], m)
 
     substituted_polynomials = []
@@ -155,9 +154,10 @@ def main():
 
     # it arg --print is true, print the matrix to tex file
     if printmatrix:
+        # substitute values != 0 by 1 in order to make the matrix readable
         ones_matrix = matrix_to_ones(reduced_matrix, keys['N'])
-        #sorted_matrix = matrix_sort_stairs(ones_matrix)
-        #sorted_matrix, inverted_col_indice = matrix_sort_triangle(ones_matrix, inverted_col_indice)
+
+        # print the matrix to file
         print_matrix(ones_matrix, inverted_col_indice, row_index)
 
     # initialize an array for the polynomials
@@ -188,6 +188,7 @@ def main():
             # increase the column index for the next column
             col_index += 1
 
+            # increase the monom count by 1 if we find a monom != 0
             if coefficient != 0:
                 monome_count += 1
 
@@ -199,8 +200,8 @@ def main():
             y_p = yp^int(monom_grade[4])
             y_q = yq^int(monom_grade[5])
 
-            # add the monomial myltyplied with its coefficient to the polunomial
-            p += coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
+            # add the monomial multiplied with its coefficient to the polunomial
+            p += (coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q)
 
             # add the absolute value of the coefficient squared for howgrave
             # grahams theorem howgrave_sum += abs(coefficient)^2

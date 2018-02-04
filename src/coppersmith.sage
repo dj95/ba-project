@@ -39,18 +39,15 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
         # calculate the polynomial for the index set
         eq_p = h_eq(i1, i2, j1, j2, u, N, e ,m)
 
-        #p = h_u_check(i1, i2, j1, j2, u, N, e ,m)
+        # polynomial from substitution
         p = g(i1, i2, j1, j2, u, N, e, m)
 
+        # check if substitution matches the equations
         if eq_p != p and not jsonoutput:
             pprint('[ ERROR ] polynomial is not equal to equation')
 
-        #p *= N_inv
-
         # avoid rows with 0 only
         if p == 0:
-            print((i1, i2, j1, j2, u))
-            p = e^m * xp1^i1 * xp2^i2 * xq1^i1 * xq2^i1
             print(p)
             continue
 
@@ -62,11 +59,12 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
         for monom in p.dict():
             coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
+            # check if monom grades have the correct bound
             if monom[4] > max(ceil((i1 + i2) / 2), 0):
                 print((i1, i2, j1, j2, u))
                 print(monom)
                 print("Error")
-            if monom[5] > max(((i1 + i2) / 2), 0):
+            if monom[5] > floor((i1 + i2) / 2):
                 print("Error")
 
         # increase the counter
@@ -81,18 +79,13 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
         
         # calculate the polynomial for the index set
         eq_p = g_p(i1, i2, j1, N, e, m)
-        #print(p)
         
-        #p = g_p_check(i1, i2, j1, N, e, m, True)
-
+        # polynomial from substitution
         p = gp(i1, i2, j1, N, e, m)
-        #print(p)
-        #print('')
 
+        # check if substitution matches the equations
         if eq_p != p and not jsonoutput:
             pprint('[ ERROR ] polynomial is not equal to equation')
-
-        #p *= N_inv
 
         # avoid rows with 0 only
         if p == 0:
@@ -107,10 +100,11 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
         for monom in p.dict():
             coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
-            if monom[4] > max(((i1 + i2) / 2) + j1, 0):
-                print("Error")
+            # check if monom grades have the correct bound
+            if monom[4] > max(ceil((i1 + i2) / 2) + j1, 0):
+                print("Error3")
             if monom[5] > max(((i1 + i2) / 2) - j1, 0):
-                print("Error")
+                print("Error4")
 
         # increase the counter
         count += 1
@@ -124,16 +118,13 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
 
         # calculate the polynomial for the index set
         eq_p = g_q(i1, i2, j2, N, e ,m)
-        #print(p)
         
-        #p = g_q_check(i1, i2, j2, N, e, m)
+        # polynomial from substitution
         p = gq(i1, i2, j2, N, e, m)
-        #print(p)
 
+        # check if substitution matches the equations
         if eq_p != p and not jsonoutput:
             pprint('[ ERROR ] polynomial is not equal to equation')
-
-        #p *= N_inv
 
         # avoid rows with 0 only
         if p == 0:
@@ -149,10 +140,11 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
             # save the multigrade
             coeffs[count][tupel_to_string(monom)] = p.dict()[monom]
 
+            # check if monom grades have the correct bound
             if monom[4] > max(ceil((i1 + i2) / 2) - j2, 0):
-                print("Error")
+                print("Error5")
             if monom[5] > max(((i1 + i2) / 2) + j2, 0):
-                print("Error")
+                print("Error6")
 
         # increase the counter
         count += 1

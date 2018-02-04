@@ -61,6 +61,9 @@ def reduced_root_check(polynomials, keys, debug, m):
             yp = keys['p'],
             yq = keys['q']
             )
+        y = evaluate_polynom(p, keys)
+
+        #y = y % (keys['e'] ^ m)
 
         counter += 1
 
@@ -106,6 +109,7 @@ def root_check(polynomials, keys, debug, m):
             yp = int(keys['p']),
             yq = int(keys['q'])
             )
+        y = evaluate_polynom(p, keys)
 
         y = y % keys['e']^m
 
@@ -129,91 +133,6 @@ def root_check(polynomials, keys, debug, m):
 
     # else return false
     return False
-
-
-def matrix_triangulate(matrix, e, m):
-    """
-    Sort the matrix rows that they form steps or a triangle.
-    """
-    # initialize some variables for work
-    work_matrix = []
-    row_index = {}
-
-    counter = -1
-    # convert matrix object to array matrix
-    for row in matrix:
-        # append a new row for every row
-        work_matrix.append([])
-        counter += 1
-
-        # append the values to each row
-        for value in row:
-            work_matrix[counter].append(value)
-
-    # append an index to each row
-    for row in work_matrix:
-        index = 0
-
-        # iterate through the columns
-        for i in range(len(row)):
-            # set the index to the column count of the value in order to save
-            # the highest column count of an existing monom
-            if row[i] != 0:
-                index = i
-
-        # append the index to each row
-        row.append(index)
-
-    sorted_matrix = []
-
-    # sort the matrix with the index
-    # iterate through all possible indices
-    for i in range(len(work_matrix[0])):
-        # iterate through all columns of the matrix
-        for row in work_matrix:
-            # check if the index is i
-            if row[-1:][0] == i:
-                # remove the index and append the row
-                row = row
-                sorted_matrix.append(row)
-
-    # initialize the triangular matrix
-    triangular_matrix = []
-
-    # iterate through all column indices
-    for i in range(len(sorted_matrix[0]) - 1):
-        # initialize indicator for a found row    
-        found_row = False
-
-        # iterate through the sorted matrix
-        for row in sorted_matrix:
-            # if we find a row with the correct index...
-            if row[-1:][0] == i:
-                # ...set the indicator True,...
-                found_row = True
-
-                # ...remove the index...
-                row = row[:-1]
-
-                # ...and append the row to the triangular matrix
-                triangular_matrix.append(row)
-
-                # continue with the next index
-                break
-
-        # if no row with the indicator exists...
-        if not found_row:
-            # initialize a row with 0 values
-            row = [0 for k in range(len(sorted_matrix[0]) - 1)]
-
-            # create the index
-            row[i] = e
-
-            # append the row
-            triangular_matrix.append(row)
-
-    # return it
-    return triangular_matrix
 
 
 def matrix_sort_stairs(matrix):
