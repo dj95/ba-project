@@ -13,7 +13,6 @@ def h(N, e, m):
     # define the polynomial ring
     R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
 
-    #TODO: validate by hand
     polynomial = (N*xp2*xq1 - xp1*xq2)
 
     return polynomial

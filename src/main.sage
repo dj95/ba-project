@@ -43,6 +43,13 @@ def main():
     # define the polynomial ring
     R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='lp')
 
+    # calculate upper bounds for roots
+    alpha = log(keys['e'], keys['N'])
+
+    print(alpha + delta - 0.25)
+    X = ceil(keys['N']^(alpha + delta - 0.5))
+    Y = ceil(keys['N']^(0.5))
+
     # print some stats
     if not jsonoutput:
         pprint('generated crt-rsa parameters')
@@ -55,14 +62,22 @@ def main():
         pprint('kp = {}'.format(keys['kp']))
         pprint('kq = {}'.format(keys['kq']))
         pprint('|N| = {} Bit'.format(bit_length))
+        pprint('kp < X {}'.format(keys['kp'] < X))
+        pprint('kq < X {}'.format(keys['kq'] < X))
+        pprint('p < Y {}'.format(keys['p'] < Y))
+        pprint('q < Y {}'.format(keys['q'] < Y))
 
         pprint('starting coppersmith with')
         pprint('m = {}    tau = {}'.format(m, tau))
+
+    pprint('alpha >= 7/16: {}'.format(alpha >= 7/16))
+    pprint('delta < 1/2 - sqrt(alpha/7): {}'.format(delta < (1/2) - sqrt(alpha / 7)))
 
     # generate the lattice for our parameters
     matrix, col_indice, polynomials_tuple, row_index = generate_lattice(
             keys['N'],
             keys['e'],
+            X, Y,
             m,
             tau,
             debug,
@@ -85,15 +100,21 @@ def main():
     polynomials = [value[0] for value in polynomials_tuple]
 
     # invert the colum index relation
-    inverted_col_indice = {}
-    for index in col_indice:
-        inverted_col_indice[col_indice[index]] = index
+    inverted_col_indice = []
+    for i in range(matrix.ncols()):
+        for index, value in col_indice.iteritems():
+            if value == i:
+                inverted_col_indice.append(index)
+                break
 
     # sort the matrix triangular
     matrix, inverted_col_indice, row_index = matrix_sort_triangle(matrix, inverted_col_indice, row_index)
 
     # substitute N from the diagonal
     matrix = substitute_N(matrix, keys['N'], keys['e'], m)
+
+    # insert upper bound
+    matrix = set_upper_bound(matrix, X, Y, inverted_col_indice)
 
     substituted_polynomials = []
 
@@ -106,12 +127,12 @@ def main():
         col_index = 0
 
         # iterate through all values of the row
-        for coefficient in row:
+        for i in range(len(row)):
             # get the monome grade from the column index
-            monom_grade = inverted_col_indice[col_index]
+            monom_grade = inverted_col_indice[i]
 
-            # increase the column index for the next column
-            col_index += 1
+            # get the coefficient
+            coefficient = row[i]
 
             # set the correct grade to the variables of each monomial
             x_p_1 = xp1^int(monom_grade[0])
@@ -120,6 +141,21 @@ def main():
             x_q_2 = xq2^int(monom_grade[3])
             y_p = yp^int(monom_grade[4])
             y_q = yq^int(monom_grade[5])
+
+            exp_xp1 = int(monom_grade[0])
+            exp_xp2 = int(monom_grade[1])
+            exp_xq1 = int(monom_grade[2])
+            exp_xq2 = int(monom_grade[3])
+            exp_yp = int(monom_grade[4])
+            exp_yq = int(monom_grade[5])
+
+            x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+            y_bound = Y^(exp_yp + exp_yq)
+            
+            x_bound_inverse = inverse_mod(x_bound, keys['e']^m)
+            y_bound_inverse = inverse_mod(y_bound, keys['e']^m)
+
+            coefficient = (coefficient * x_bound_inverse * y_bound_inverse) % keys['e']^m
 
             # add the monomial myltyplied with its coefficient to the polunomial
             p += coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
@@ -138,7 +174,7 @@ def main():
     # reduce it
     if not noreduction:
         try:
-            reduced_matrix = matrix.LLL(algorithm='fpLLL:proved', use_siegel=True)
+            reduced_matrix = matrix.LLL()
         except Exception as e:
             if not jsonoutput:
                 pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
@@ -152,6 +188,12 @@ def main():
             pprint("LLL-reduction           [" + Fore.YELLOW + "  skip  " + Fore.RESET + "]") 
         reduced_matrix = matrix
 
+    # check if determinant is lower than e^nm
+    if (reduced_matrix.determinant() < keys['e']^(reduced_matrix.ncols() * m)):
+        pprint("det(B) < e^nm           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+    else:
+        pprint("det(B) < e^nm           [" + Fore.RED + " failed " + Fore.RESET + "]") 
+
     # it arg --print is true, print the matrix to tex file
     if printmatrix:
         # substitute values != 0 by 1 in order to make the matrix readable
@@ -163,17 +205,10 @@ def main():
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
 
-    counter = -1
-
     # iterate through the rows of the reduced coefficient matrix
     for row in reduced_matrix.rows():
         # initialize the polunomial for each row
         p = 0
-
-        counter += 1
-
-        # reset the column index
-        col_index = 0
 
         # initialize variables for howgrave graham theorem
         howgrave_sum = 0
@@ -181,12 +216,12 @@ def main():
         monome_count = 0
 
         # iterate through all values of the row
-        for coefficient in row:
+        for i in range(len(row)):
             # get the monome grade from the column index
-            monom_grade = inverted_col_indice[col_index]
+            monom_grade = inverted_col_indice[i]
 
-            # increase the column index for the next column
-            col_index += 1
+            # get the coefficient
+            coefficient = row[i]
 
             # increase the monom count by 1 if we find a monom != 0
             if coefficient != 0:
@@ -200,25 +235,38 @@ def main():
             y_p = yp^int(monom_grade[4])
             y_q = yq^int(monom_grade[5])
 
+            exp_xp1 = int(monom_grade[0])
+            exp_xp2 = int(monom_grade[1])
+            exp_xq1 = int(monom_grade[2])
+            exp_xq2 = int(monom_grade[3])
+            exp_yp = int(monom_grade[4])
+            exp_yq = int(monom_grade[5])
+
+            x_bound = X**(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+            y_bound = Y**(exp_yp + exp_yq)
+
+            howgrave_sum += abs(coefficient)^2
+
+            coefficient = coefficient / (x_bound * y_bound)
+
             # add the monomial multiplied with its coefficient to the polunomial
             p += (coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q)
 
             # add the absolute value of the coefficient squared for howgrave
             # grahams theorem howgrave_sum += abs(coefficient)^2
-            howgrave_sum += abs(coefficient)^2
 
         # append the polynomials to the reduced polynomials array
         reduced_polynomials.append(p)
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(reduced_matrix.ncols())):
+        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(monome_count)):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
 
     # check the roots of the reduced polynomials
-    if reduced_root_check(reduced_polynomials, keys, debug, m):
+    if reduced_root_check(polynom_vector, keys, debug, m):
         if not jsonoutput:
             pprint("reduced root check      [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
@@ -239,12 +287,13 @@ def main():
 
     #print(polynom_vector)
 
-    # create an ideal from the polynom vector
-    I = Ideal(polynom_vector)
 
     # calculate the groebner basis
     if not nogroebner:
+        # create an ideal from the polynom vector
+        I = Ideal(polynom_vector)
         if not jsonoutput:
+
             pprint('calculate groebner basis')
             B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
         else:

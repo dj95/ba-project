@@ -203,7 +203,7 @@ def substitute_xp(polynomial):
 def substitute_N(matrix, N, e, m):
     # calculate e^m for the inverse
     em = e^m
-
+    
     # get the inverse of N in e^m
     N_inv = inverse_mod(N, em)
 

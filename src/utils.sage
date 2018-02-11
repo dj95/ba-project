@@ -12,6 +12,25 @@
 from colorama import Fore, Back, Style
 
 
+def set_upper_bound(matrix, X, Y, col_index):
+    for i in range(matrix.nrows()):
+        for j in range(matrix.ncols()):
+            monom_grade = col_index[j]
+
+            exp_xp1 = int(monom_grade[0])
+            exp_xp2 = int(monom_grade[1])
+            exp_xq1 = int(monom_grade[2])
+            exp_xq2 = int(monom_grade[3])
+            exp_yp = int(monom_grade[4])
+            exp_yq = int(monom_grade[5])
+
+            x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+            y_bound = Y^(exp_yp + exp_yq)
+
+            matrix[i, j] = x_bound * y_bound * matrix[i, j]
+    return matrix
+
+
 def evaluate_polynom(p, keys):
     poly = p.dict()
     
@@ -52,7 +71,6 @@ def reduced_root_check(polynomials, keys, debug, m):
     # iterate through polynomials
     for p in polynomials:
         # calculate the y value with key parameters
-        #y = evaluate_polynom(p, keys)
         y = p(
             xp1 = keys['kq'] - 1,
             xp2 = keys['kp'],
@@ -61,7 +79,6 @@ def reduced_root_check(polynomials, keys, debug, m):
             yp = keys['p'],
             yq = keys['q']
             )
-        y = evaluate_polynom(p, keys)
 
         #y = y % (keys['e'] ^ m)
 

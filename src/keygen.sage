@@ -61,14 +61,14 @@ def generate_keys(bit_length=1024, delta=0.090):
                 }
 
         if kp == 0 or kq == 0:
-            keys = generate_keys(bit_length)
+            keys = generate_keys(bit_length, delta)
 
     except ZeroDivisionError:
         # if no inverse exists, start all over again
-        keys = generate_keys(bit_length)
+        keys = generate_keys(bit_length, delta)
     except ValueError:
         # if crt does not work
-        keys = generate_keys(bit_length)
+        keys = generate_keys(bit_length, delta)
 
     return keys
 

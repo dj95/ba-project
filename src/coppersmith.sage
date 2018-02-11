@@ -9,7 +9,7 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
+def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     """
     Generate the lattice for the coppersmith variant of
     the given attack.
@@ -165,23 +165,30 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
     # initialize the matrix
     matrix = Matrix(len(coeffs), col_index)
 
-    row = 0
     row_index = []
 
     # iterate through the polynoms we save before
-    for polynom in coeffs:
+    for row in range(len(coeffs)):
         row_index.append(polynomials[row][1])
         # check if we have monoms
         if len(coeffs[polynom]) > 0:
             # iterate through every monom of the polynom
-            for monom in coeffs[polynom]:
+            for monom in coeffs[row]:
                 # get the index from the monom grade
                 col = col_indice[monom]
 
-                # set the depending cell of the matrix to the coefficient
-                matrix[row, col] = coeffs[polynom][monom]
+                #exp_xp1 = int(monom[0])
+                #exp_xp2 = int(monom[1])
+                #exp_xq1 = int(monom[2])
+                #exp_xq2 = int(monom[3])
+                #exp_yp = int(monom[4])
+                #exp_yq = int(monom[5])
 
-            row += 1
+                #x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+                #y_bound = Y^(exp_yp + exp_yq)
+
+                # set the depending cell of the matrix to the coefficient
+                matrix[row, col] = coeffs[row][monom]
 
     # eliminate cols with 0
     cols = matrix.ncols()
@@ -210,7 +217,7 @@ def generate_lattice(N, e, m=8, tau=0.75, debug=False, jsonoutput=False):
             pprint("column check            [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
     # print some stats
-    matrix = matrix.delete_columns(delete_index)
+    #matrix = matrix.delete_columns(delete_index)
 
     # return the lattice and its multigrade-column-relation
     return matrix, col_indice, polynomials, row_index
