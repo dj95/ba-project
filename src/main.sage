@@ -96,7 +96,7 @@ def main():
     pprint('delta < 1/2 - sqrt(alpha/7): {}'.format(delta < (1/2) - sqrt(alpha / 7)))
 
     # generate the lattice for our parameters
-    matrix, col_indice, polynomials_tuple, row_index = generate_lattice(
+    matrix, col_indice, polynomials_tuple, row_index, detB, sx, sy, se = generate_lattice(
             keys['N'],
             keys['e'],
             X, Y,
@@ -125,13 +125,20 @@ def main():
     inverted_col_indice = dict((v,k) for k,v in col_indice.iteritems())
 
     # sort the matrix triangular
-    matrix, inverted_col_indice, row_index = matrix_sort_triangle(matrix, inverted_col_indice, row_index)
+    matrix, inverted_col_indice, row_index, polynomials_tuple = matrix_sort_triangle(matrix, inverted_col_indice, row_index, polynomials_tuple)
+
+    matrix = array_to_matrix(matrix)
 
     matrix = set_upper_bound(matrix, X, Y, inverted_col_indice, keys['e'], m)
 
     # substitute N from the diagonal
-    #TODO: hier steck der Fehler!!!
     matrix = substitute_N(matrix, keys['N'], keys['e'], m, X, Y)
+
+    detL = matrix.determinant()
+    pprint(' detB == detL : {}'.format(detL == detB))
+    check_det_exp(matrix, X, Y, keys['e'], sx, sy, se, detB, keys, m)
+
+    return
 
     substituted_polynomials = []
 
@@ -171,33 +178,6 @@ def main():
             
             x_bound_inverse = inverse_mod(x_bound, keys['e']^m)
             y_bound_inverse = inverse_mod(y_bound, keys['e']^m)
-
-            #if coefficient % X == 0:
-            #    print('X')
-            #if coefficient % Y == 0:
-            #    print('Y')
-            #if coefficient % keys['N'] == 0:
-            #    print('N')
-            #if coefficient % keys['e']^m == 0:
-            #    print('em')
-
-            test = coefficient
-            eX = 0
-            eY = 0
-            while test % X == 0 and test != 0:
-                test /= X
-                eX += 1
-
-            while test % Y == 0 and test != 0:
-                test /= Y
-                eY += 1
-
-            #if coefficient != 0:
-            #    print(coefficient)
-            #    print(coefficient % keys['e']^m)
-            #    print(monom_grade)
-            #    print(eX)
-            #    print(eY)
 
             coefficient = (coefficient * x_bound_inverse * y_bound_inverse) % keys['e']^m
 
@@ -249,11 +229,9 @@ def main():
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
 
-    detL = reduced_matrix.determinant()
-    print(detL)
+    detL = abs(reduced_matrix.determinant())
     detL = sqrt(detL, reduced_matrix.ncols())
     detL = long(ceil(detL))
-    print(detL)
 
     pprint(' Check ||v|| < det(L)^(1/n)')
 

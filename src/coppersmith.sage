@@ -27,7 +27,6 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     coeffs = {}
     count = 0
     polynomials = []
-    N_inv = pow(N, -1, e^m)
 
     # initialize the generator for the last index set
     I_x = index_set_x(m, tau)
@@ -61,8 +60,6 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
 
             # check if monom grades have the correct bound
             if monom[4] > max(ceil((i1 + i2) / 2), 0):
-                print((i1, i2, j1, j2, u))
-                print(monom)
                 print("Error")
             if monom[5] > floor((i1 + i2) / 2):
                 print("Error")
@@ -177,47 +174,49 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
                 # get the index from the monom grade
                 col = col_indice[monom]
 
-                #exp_xp1 = int(monom[0])
-                #exp_xp2 = int(monom[1])
-                #exp_xq1 = int(monom[2])
-                #exp_xq2 = int(monom[3])
-                #exp_yp = int(monom[4])
-                #exp_yq = int(monom[5])
-
-                #x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
-                #y_bound = Y^(exp_yp + exp_yq)
-
                 # set the depending cell of the matrix to the coefficient
                 matrix[row, col] = coeffs[row][monom]
 
-    # eliminate cols with 0
-    cols = matrix.ncols()
-    rows = matrix.nrows()
-    delete_index = []
-    index = 0
-
-    # iterate through columns
-    for col in matrix.columns():
-        # iterate through every row of the column
-        for i in range(rows):
-            # if we have no 0, skip to the next column
-            if col[i] != 0:
-                break
-            # if we have the last rows value in one column and its 0
-            if col[i] == 0 and i == (rows - 1):
-                # delete the column because it contains 0 only
-                delete_index.append(index)
-        index += 1
-
-    if len(delete_index) == 0:
-        if not jsonoutput:
-            pprint("column check            [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-    else:
-        if not jsonoutput:
-            pprint("column check            [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
     # print some stats
     #matrix = matrix.delete_columns(delete_index)
 
+    # calculate determinant according to the paper
+    sx = 0
+    sy = 0
+    se = 0
+
+    # initialize the generator for the last index set
+    I_x = index_set_x(m, tau)
+
+    # iterate through the last first set
+    for (i1, i2, j1, j2, u) in I_x:
+        sx += (i1 + i2 + j1 + j2 + 2*u) 
+        if i1 + i2 % 2 == 0:
+            sy += int(floor((i1 + i2) / 2))
+        else:
+            sy += int(ceil((i1 + i2) / 2))
+        se += (m - (i1 + i2 +u))
+
+    # initialize the generator for the last index set
+    I_y_p = index_set_y_p(m, tau)
+
+    # iterate through the second index set
+    for (i1, i2, j1) in I_y_p:
+        sx += (i1 + i2)
+        sy += (ceil((i1 + i2) / 2) + j1)
+        se += (m - (i1 + i2))
+
+    # initialize the generator for the last index set
+    I_y_q = index_set_y_q(m, tau)
+
+    # iterate through the last index set
+    for (i1, i2, j2) in I_y_q:
+        sx += (i1 + i2)
+        sy += (floor((i1 + i2) / 2) + j2)
+        se += (m - (i1 + i2))
+
+    detB = X^sx * Y^sy * e^se
+
     # return the lattice and its multigrade-column-relation
-    return matrix, col_indice, polynomials, row_index
+    return matrix, col_indice, polynomials, row_index, detB, sx, sy, se

@@ -12,6 +12,61 @@
 from colorama import Fore, Back, Style
 
 
+def array_to_matrix(array_matrix):
+    matrix = Matrix(len(array_matrix), len(array_matrix[0]))
+
+    for i in range(len(array_matrix)):
+        for j in range(len(array_matrix[i])):
+            matrix[i, j] = array_matrix[i][j]
+    return matrix
+
+
+def check_det_exp(matrix, X, Y, e, sx, sy, se, detB, keys, m):
+    d = 1
+    for i in range(matrix.nrows()):
+        print(matrix[i, i])
+        d *= matrix[i, i]
+    old_d = d
+    print(d == detB)
+    print(d)
+    print(detB)
+
+    tx = 0
+    ty = 0
+    te = 0
+    tn = 0
+
+    while d % X == 0 and d != 0:
+        d /= X
+        tx += 1
+    while d % Y == 0 and d != 0:
+        d /= Y
+        ty += 1
+    while d % e == 0 and d != 0:
+        d /= e
+        te += 1
+    print("d={}".format(d % keys['q']))
+    print((d) % keys['N'])
+    asd = old_d / detB
+    print(asd)
+    print(asd % keys['N'])
+    
+    asd = asd - 1
+    tasd = 0
+    while asd % keys['N'] == 0:
+        asd /= keys['N']
+        tasd += 1
+
+    print(tasd)
+    print(asd % keys['N'])
+
+    print("{} - {}".format(sx, tx))
+    print("{} - {}".format(sy, ty))
+    print("{} - {}".format(se, te))
+
+    return
+
+
 def set_upper_bound(matrix, X, Y, col_index, e, m):
     for i in range(matrix.nrows()):
         for j in range(matrix.ncols()):
@@ -84,10 +139,6 @@ def reduced_root_check(polynomials, keys, debug, m):
             yp = keys['p'],
             yq = keys['q']
             )
-
-        #y = y % (keys['e'] ^ m)
-        test = y / (keys['e']^m)
-        print(test)
 
         counter += 1
 

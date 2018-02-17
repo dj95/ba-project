@@ -9,6 +9,9 @@
 # (c) 2018 - Daniel Jankowski
 
 
+import sys
+
+
 def substitute_y(polynomial, N, e, m):
     """
     Substitute yp*yq to N
@@ -208,15 +211,15 @@ def substitute_N(matrix, N, e, m, X, Y):
     N_inv = inverse_mod(N, em)
 
     # iterate through the matrix
-    for i in range(matrix.nrows()):
+    for i in range(0, matrix.nrows()):
         # while the matrix diagonals contains multiple of N
         while (matrix[i, i] % N) == 0:
             # iterate through the columns
             for j in range(i + 1):
-                if matrix[i, j] % N == 0:
-                    matrix[i, j] = long(matrix[i, j] / N)
+                if (matrix[i, j] % N) == 0 and matrix[i, j] != 0:
+                    matrix[i, j] = matrix[i, j] / N
                 else:
-                    matrix[i, j] = (matrix[i, j] * N_inv)
+                    matrix[i, j] = matrix[i, j] * N_inv
 
 
     # return the matrix

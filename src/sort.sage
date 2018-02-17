@@ -195,7 +195,7 @@ def swap_cols(matrix, i, j):
     return matrix
 
 
-def matrix_sort_triangle(matrix, monom_index, polynom_index):
+def matrix_sort_triangle(matrix, monom_index, polynom_index, polynomials_tuple):
     """
     Sort the matrix rows that they form steps or a triangle.
     """
@@ -219,13 +219,25 @@ def matrix_sort_triangle(matrix, monom_index, polynom_index):
 
         # iterate throygh the row index
         for k in range(i, j + 1):
+            found_value = False
+
             # it there is only 1 value in the row...
             if row_index[k] == 1:
+                if found_value:
+                    found_lesser_value = False
+                    for q in range(i + 1, j + 1):
+                        if work_matrix[i][q] != 0:
+                            if work_matrix[k][q] < work_matrix[i][i]:
+                                found_lesser_value = True
+                    if not found_lesser_value:
+                        continue
+
                 # swap the row to the top
                 work_matrix = swap_rows(work_matrix, k, i)
 
                 # swap the row index...
                 row_index = swap_index(row_index, k, i)
+                polynomials_tuple = swap_index(polynomials_tuple, k, i)
 
                 # ...and the polynom_index, too
                 polynom_index = swap_index(polynom_index, k, i)
@@ -246,15 +258,22 @@ def matrix_sort_triangle(matrix, monom_index, polynom_index):
                             monom_index = swap_index(monom_index, l, i)
 
                             # escape the for loop since we got our result
-                            break
-
-                # escape the for loop since we got our result
-                break
+                            found_value = True
 
         # iterate throygh the col index
         for k in range(i + 1, j + 1):
+            found_value = False
             # it there is only 1 value in the row...
             if col_index[k] == 1:
+                if found_value:
+                    found_lesser_value = False
+                    for q in range(i + 1, j + 1):
+                        if work_matrix[q][k] != 0:
+                            if work_matrix[q][k] < work_matrix[j][j]:
+                                found_lesser_value = True
+                    if not found_lesser_value:
+                        continue
+
                 # swap the row to the right
                 work_matrix = swap_cols(work_matrix, k, j)
 
@@ -275,18 +294,16 @@ def matrix_sort_triangle(matrix, monom_index, polynom_index):
 
                             # swap the row index
                             row_index = swap_index(row_index, l, j)
+                            polynomials_tuple = swap_index(polynomials_tuple, l, j)
 
                             # and swap the polynom index as well
                             polynom_index = swap_index(polynom_index, l, j)
 
                             # escape the for loop since we got our result
-                            break
-
-                # escape the for loop since we got our result
-                break
+                            found_value = True
 
         # update the row and col index for the next iteration
         row_index, col_index = update_index(work_matrix, i, row_index, col_index)
 
     # return it
-    return Matrix(work_matrix), monom_index, polynom_index
+    return work_matrix, monom_index, polynom_index, polynomials_tuple

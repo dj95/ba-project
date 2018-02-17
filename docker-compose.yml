@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    sage:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        image: coppersmith
+        volumes:
+            - ./src:/home/sage/
+        container_name: coppersmith
