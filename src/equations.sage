@@ -9,7 +9,7 @@
 # (c) 2018 - Daniel Jankowski
 
 
-def h_eq(i1, i2, j1, j2, u, N, e ,m):
+def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
     """
     The first shift polunomial with the substitutions.
     """
@@ -43,9 +43,9 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m):
                         monom *= e^(m - (i1 + i2 + u))
 
                         # multiply with the correct grades for xp1, xp2, yp
-                        monom *= xp1^(i1 + j1 + u - kp1)
-                        monom *= xp2^(i2 + j2 + u - kp2)
-                        monom *= yp^(ip - int(floor((i1 + i2) / 2)))
+                        monom *= (xp1)^(i1 + j1 + u - kp1)
+                        monom *= (xp2)^(i2 + j2 + u - kp2)
+                        monom *= (yp)^(ip - int(floor((i1 + i2) / 2)))
 
                         # add the monom to the polynom
                         p += monom
@@ -74,9 +74,9 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m):
                         monom *= e^(m - (i1 + i2 + u))
 
                         # multiply with the correct grades for xp1, xp2, yp
-                        monom *= xq1^(i1 + j1 + u - kq1)
-                        monom *= xq2^(i2 + j2 + u - kq2)
-                        monom *= yq^(int(floor((i1 + i2) / 2)) - ip)
+                        monom *= (xq1)^(i1 + j1 + u - kq1)
+                        monom *= (xq2)^(i2 + j2 + u - kq2)
+                        monom *= (yq)^(int(floor((i1 + i2) / 2)) - ip)
 
                         # add the monom to the polynom
                         p += monom
@@ -235,7 +235,7 @@ def g_p_check(i1, i2, j1, N, e, m, substitute=True):
     return p
 
 
-def g_p(i1, i2, j1, N, e, m): 
+def g_p(i1, i2, j1, N, e, m, X, Y): 
     """
     Calculate the second shift polunomial with all substitutions
     like in the proof on page 31/32.
@@ -268,9 +268,9 @@ def g_p(i1, i2, j1, N, e, m):
                     monom *= e^(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= xp1^(i1 - kp1)
-                    monom *= xp2^(i2 - kp2)
-                    monom *= yp^(ip - int(floor((i1 + i2) / 2)) + j1)
+                    monom *= (xp1)^(i1 - kp1)
+                    monom *= (xp2)^(i2 - kp2)
+                    monom *= (yp)^(ip - int(floor((i1 + i2) / 2)) + j1)
 
                     # add the monom to the polynom
                     p += monom
@@ -297,9 +297,9 @@ def g_p(i1, i2, j1, N, e, m):
                     monom *= e^(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= xq1^(i1 - kq1)
-                    monom *= xq2^(i2 - kq2)
-                    monom *= yq^(int(floor((i1 + i2) / 2)) - j1 - ip)
+                    monom *= (xq1)^(i1 - kq1)
+                    monom *= (xq2)^(i2 - kq2)
+                    monom *= (yq)^(int(floor((i1 + i2) / 2)) - j1 - ip)
 
                     # add the monom to the polynom
                     p += monom
@@ -360,7 +360,7 @@ def g_q_check(i1, i2, j2, N, e, m):
     return p
 
 
-def g_q(i1, i2, j2, N, e, m):
+def g_q(i1, i2, j2, N, e, m, X, Y):
     """
     Calculate the third shift polunomial with all substitutions
     like in the proof on page 31/32., just with -j1 substituted
@@ -396,9 +396,9 @@ def g_q(i1, i2, j2, N, e, m):
                     monom *= e^(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= xp1^(i1 - kp1)
-                    monom *= xp2^(i2 - kp2)
-                    monom *= yp^(ip - int(floor((i1 + i2) / 2)) - j2)
+                    monom *= (xp1)^(i1 - kp1)
+                    monom *= (xp2)^(i2 - kp2)
+                    monom *= (yp)^(ip - int(floor((i1 + i2) / 2)) - j2)
 
                     # add the monom to the polynom
                     p += monom
@@ -425,9 +425,9 @@ def g_q(i1, i2, j2, N, e, m):
                     monom *= e^(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= xq1^(i1 - kq1)
-                    monom *= xq2^(i2 - kq2)
-                    monom *= yq^(int(floor((i1 + i2) / 2)) + j2 - ip)
+                    monom *= (xq1)^(i1 - kq1)
+                    monom *= (xq2)^(i2 - kq2)
+                    monom *= (yq)^(int(floor((i1 + i2) / 2)) + j2 - ip)
 
                     # add the monom to the polynom
                     p += monom

@@ -9,6 +9,8 @@
 # (c) 2018 - Daniel Jankowski
 
 
+import numpy
+
 from Crypto.Util import number
 from functools import reduce
 from math import log
@@ -35,8 +37,8 @@ def generate_keys(bit_length=1024, delta=0.090):
     boundary = N ** delta
 
     # get random smal dp and dq with the calculated boundary
-    dp = number.getRandomInteger(number.size(int(boundary)))
-    dq = number.getRandomInteger(number.size(int(boundary)))
+    dp = ZZ.random_element(2, int(boundary) - 1)
+    dq = ZZ.random_element(2, int(boundary) - 1)
 
     # get the related e to our d
     try:

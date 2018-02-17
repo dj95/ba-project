@@ -12,7 +12,7 @@
 from colorama import Fore, Back, Style
 
 
-def set_upper_bound(matrix, X, Y, col_index):
+def set_upper_bound(matrix, X, Y, col_index, e, m):
     for i in range(matrix.nrows()):
         for j in range(matrix.ncols()):
             monom_grade = col_index[j]
@@ -27,7 +27,12 @@ def set_upper_bound(matrix, X, Y, col_index):
             x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
             y_bound = Y^(exp_yp + exp_yq)
 
-            matrix[i, j] = x_bound * y_bound * matrix[i, j]
+            bound = x_bound * y_bound 
+
+            matrix[i, j] = bound * matrix[i, j]
+
+            coefficient = matrix[i, j]
+
     return matrix
 
 
@@ -81,6 +86,8 @@ def reduced_root_check(polynomials, keys, debug, m):
             )
 
         #y = y % (keys['e'] ^ m)
+        test = y / (keys['e']^m)
+        print(test)
 
         counter += 1
 

@@ -37,7 +37,7 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
         #print('  -> (i1, i2, j1, j2, u) = ({}, {}, {}, {}, {})'.format(i1, i2, j1, j2, u))
 
         # calculate the polynomial for the index set
-        eq_p = h_eq(i1, i2, j1, j2, u, N, e ,m)
+        eq_p = h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y)
 
         # polynomial from substitution
         p = g(i1, i2, j1, j2, u, N, e, m)
@@ -78,7 +78,7 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
         #print('  -> (i1, i2, j1) = ({}, {}, {})'.format(i1, i2, j1))
         
         # calculate the polynomial for the index set
-        eq_p = g_p(i1, i2, j1, N, e, m)
+        eq_p = g_p(i1, i2, j1, N, e, m, X, Y)
         
         # polynomial from substitution
         p = gp(i1, i2, j1, N, e, m)
@@ -117,7 +117,7 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
         #print('  -> (i1, i2, j2) = ({}, {}, {})'.format(i1, i2, j2))
 
         # calculate the polynomial for the index set
-        eq_p = g_q(i1, i2, j2, N, e ,m)
+        eq_p = g_q(i1, i2, j2, N, e ,m, X, Y)
         
         # polynomial from substitution
         p = gq(i1, i2, j2, N, e, m)

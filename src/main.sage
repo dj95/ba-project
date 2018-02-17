@@ -46,9 +46,20 @@ def main():
     # calculate upper bounds for roots
     alpha = log(keys['e'], keys['N'])
 
+    if keys['p'] < keys['q']:
+        print(keys['q'] < 2 * keys['p'])
+    else:
+        print(keys['p'] < 2 * keys['q'])
+
     print(alpha + delta - 0.25)
     X = ceil(keys['N']^(alpha + delta - 0.5))
-    Y = ceil(keys['N']^(0.5))
+    Y = 2*ceil(1 + keys['N']^(0.5))
+
+    #X = long(max(keys['kp'] + 1, keys['kq'] + 1))
+    Y = long(max(keys['p'] + 1, keys['q'] + 1))
+
+    print(keys['dp'] < keys['N']^delta)
+    print(keys['dq'] < keys['N']^delta)
 
     # print some stats
     if not jsonoutput:
@@ -66,6 +77,17 @@ def main():
         pprint('kq < X {}'.format(keys['kq'] < X))
         pprint('p < Y {}'.format(keys['p'] < Y))
         pprint('q < Y {}'.format(keys['q'] < Y))
+
+        pprint('{}'.format(
+            keys['e']*keys['dp'] == 1 + keys['kp'] * (keys['p'] - 1)
+                    ))
+        pprint('{}'.format(
+                keys['e']*keys['dq'] == 1 + keys['kq'] * (keys['q'] - 1)
+                    ))
+
+        pprint('{}'.format(
+            (X^4 * Y^2) < keys['e']^m
+                    ))
 
         pprint('starting coppersmith with')
         pprint('m = {}    tau = {}'.format(m, tau))
@@ -100,21 +122,16 @@ def main():
     polynomials = [value[0] for value in polynomials_tuple]
 
     # invert the colum index relation
-    inverted_col_indice = []
-    for i in range(matrix.ncols()):
-        for index, value in col_indice.iteritems():
-            if value == i:
-                inverted_col_indice.append(index)
-                break
+    inverted_col_indice = dict((v,k) for k,v in col_indice.iteritems())
 
     # sort the matrix triangular
     matrix, inverted_col_indice, row_index = matrix_sort_triangle(matrix, inverted_col_indice, row_index)
 
-    # substitute N from the diagonal
-    matrix = substitute_N(matrix, keys['N'], keys['e'], m)
+    matrix = set_upper_bound(matrix, X, Y, inverted_col_indice, keys['e'], m)
 
-    # insert upper bound
-    matrix = set_upper_bound(matrix, X, Y, inverted_col_indice)
+    # substitute N from the diagonal
+    #TODO: hier steck der Fehler!!!
+    matrix = substitute_N(matrix, keys['N'], keys['e'], m, X, Y)
 
     substituted_polynomials = []
 
@@ -154,6 +171,33 @@ def main():
             
             x_bound_inverse = inverse_mod(x_bound, keys['e']^m)
             y_bound_inverse = inverse_mod(y_bound, keys['e']^m)
+
+            #if coefficient % X == 0:
+            #    print('X')
+            #if coefficient % Y == 0:
+            #    print('Y')
+            #if coefficient % keys['N'] == 0:
+            #    print('N')
+            #if coefficient % keys['e']^m == 0:
+            #    print('em')
+
+            test = coefficient
+            eX = 0
+            eY = 0
+            while test % X == 0 and test != 0:
+                test /= X
+                eX += 1
+
+            while test % Y == 0 and test != 0:
+                test /= Y
+                eY += 1
+
+            #if coefficient != 0:
+            #    print(coefficient)
+            #    print(coefficient % keys['e']^m)
+            #    print(monom_grade)
+            #    print(eX)
+            #    print(eY)
 
             coefficient = (coefficient * x_bound_inverse * y_bound_inverse) % keys['e']^m
 
@@ -205,6 +249,14 @@ def main():
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
 
+    detL = reduced_matrix.determinant()
+    print(detL)
+    detL = sqrt(detL, reduced_matrix.ncols())
+    detL = long(ceil(detL))
+    print(detL)
+
+    pprint(' Check ||v|| < det(L)^(1/n)')
+
     # iterate through the rows of the reduced coefficient matrix
     for row in reduced_matrix.rows():
         # initialize the polunomial for each row
@@ -228,45 +280,39 @@ def main():
                 monome_count += 1
 
             # set the correct grade to the variables of each monomial
-            x_p_1 = xp1^int(monom_grade[0])
-            x_p_2 = xp2^int(monom_grade[1])
-            x_q_1 = xq1^int(monom_grade[2])
-            x_q_2 = xq2^int(monom_grade[3])
-            y_p = yp^int(monom_grade[4])
-            y_q = yq^int(monom_grade[5])
+            x_p_1 = (xp1 / X)^int(monom_grade[0])
+            x_p_2 = (xp2 / X)^int(monom_grade[1])
+            x_q_1 = (xq1 / X)^int(monom_grade[2])
+            x_q_2 = (xq2 / X)^int(monom_grade[3])
+            y_p = (yp / Y)^int(monom_grade[4])
+            y_q = (yq / Y)^int(monom_grade[5])
 
-            exp_xp1 = int(monom_grade[0])
-            exp_xp2 = int(monom_grade[1])
-            exp_xq1 = int(monom_grade[2])
-            exp_xq2 = int(monom_grade[3])
-            exp_yp = int(monom_grade[4])
-            exp_yq = int(monom_grade[5])
-
-            x_bound = X**(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
-            y_bound = Y**(exp_yp + exp_yq)
-
+            # add the absolute value of the coefficient squared for howgrave
+            # grahams theorem howgrave_sum += abs(coefficient)^2
             howgrave_sum += abs(coefficient)^2
-
-            coefficient = coefficient / (x_bound * y_bound)
 
             # add the monomial multiplied with its coefficient to the polunomial
             p += (coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q)
 
-            # add the absolute value of the coefficient squared for howgrave
-            # grahams theorem howgrave_sum += abs(coefficient)^2
-
         # append the polynomials to the reduced polynomials array
         reduced_polynomials.append(p)
 
+        howgrave = floor(sqrt(howgrave_sum))
+
+        if howgrave < detL:
+            print('  -> True')
+        else:
+            print('  -> False')
+
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if sqrt(howgrave_sum) < ((keys['e']^m) / sqrt(monome_count)):
+        if howgrave < keys['e']^m:
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
 
     # check the roots of the reduced polynomials
-    if reduced_root_check(polynom_vector, keys, debug, m):
+    if reduced_root_check(reduced_polynomials, keys, debug, m):
         if not jsonoutput:
             pprint("reduced root check      [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
     else:
