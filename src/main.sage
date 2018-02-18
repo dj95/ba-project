@@ -46,6 +46,8 @@ def main():
     # calculate upper bounds for roots
     alpha = log(keys['e'], keys['N'])
 
+    print(delta < (1/2 - sqrt(alpha/7)))
+
     if keys['p'] < keys['q']:
         print(keys['q'] < 2 * keys['p'])
     else:
@@ -53,10 +55,10 @@ def main():
 
     print(alpha + delta - 0.25)
     X = ceil(keys['N']^(alpha + delta - 0.5))
-    Y = 2*ceil(1 + keys['N']^(0.5))
+    Y = ceil(keys['N']^(0.5))
 
     #X = long(max(keys['kp'] + 1, keys['kq'] + 1))
-    Y = long(max(keys['p'] + 1, keys['q'] + 1))
+    #Y = long(max(keys['p'] + 1, keys['q'] + 1))
 
     print(keys['dp'] < keys['N']^delta)
     print(keys['dq'] < keys['N']^delta)
@@ -134,11 +136,23 @@ def main():
     # substitute N from the diagonal
     matrix = substitute_N(matrix, keys['N'], keys['e'], m, X, Y)
 
-    detL = matrix.determinant()
-    pprint(' detB == detL : {}'.format(detL == detB))
-    check_det_exp(matrix, X, Y, keys['e'], sx, sy, se, detB, keys, m)
+    #for i in range(matrix.nrows()):
+    #    ui = matrix[i, i]
+    #    while ui % keys['e'] == 0 and ui != 0:
+    #        ui = ui / keys['e']
+    #    if matrix[i, i] % (keys['N'] - 1) == 0 and matrix[i, i] != 0:
+    #        print('reduced: {}'.format(ui))
+    #        print(polynomials_tuple[i])
 
-    return
+    detL = matrix.determinant()
+    pprint(' detB == detL : {}'.format(abs(detL) == abs(detB)))
+    pprint(' detB < e^nm == {}'.format(abs(detB) < keys['e']^(matrix.ncols() * m)))
+    print(abs(detB))
+    print(keys['e']^(matrix.ncols() * m))
+    #check_det_exp(matrix, X, Y, keys['e'], sx, sy, se, detB, keys, m)
+    
+
+    #return
 
     substituted_polynomials = []
 

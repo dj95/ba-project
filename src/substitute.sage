@@ -209,6 +209,7 @@ def substitute_N(matrix, N, e, m, X, Y):
 
     # get the inverse of N in e^m
     N_inv = inverse_mod(N, em)
+    N1_inv = inverse_mod(N - 1, em)
 
     # iterate through the matrix
     for i in range(0, matrix.nrows()):
@@ -222,5 +223,13 @@ def substitute_N(matrix, N, e, m, X, Y):
                     matrix[i, j] = matrix[i, j] * N_inv
 
 
+        # while the matrix diagonals contains multiple of N
+        while (matrix[i, i] % (N - 1)) == 0:
+            # iterate through the columns
+            for j in range(i + 1):
+                if (matrix[i, j] % (N - 1)) == 0 and matrix[i, j] != 0:
+                    matrix[i, j] = matrix[i, j] / (N - 1)
+                else:
+                    matrix[i, j] = matrix[i, j] * N1_inv
     # return the matrix
     return matrix

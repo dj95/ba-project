@@ -177,7 +177,6 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
                 # set the depending cell of the matrix to the coefficient
                 matrix[row, col] = coeffs[row][monom]
 
-
     # print some stats
     #matrix = matrix.delete_columns(delete_index)
 

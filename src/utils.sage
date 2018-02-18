@@ -24,7 +24,10 @@ def array_to_matrix(array_matrix):
 def check_det_exp(matrix, X, Y, e, sx, sy, se, detB, keys, m):
     d = 1
     for i in range(matrix.nrows()):
-        print(matrix[i, i])
+        ui = matrix[i, i]
+        while ui % e == 0:
+            ui = ui / e
+        print('reduced: {}'.format(ui))
         d *= matrix[i, i]
     old_d = d
     print(d == detB)
@@ -45,11 +48,11 @@ def check_det_exp(matrix, X, Y, e, sx, sy, se, detB, keys, m):
     while d % e == 0 and d != 0:
         d /= e
         te += 1
-    print("d={}".format(d % keys['q']))
-    print((d) % keys['N'])
+    #print("d={}".format(d % keys['q']))
+    #print((d) % keys['N'])
     asd = old_d / detB
-    print(asd)
-    print(asd % keys['N'])
+    #print(asd)
+    #print(asd % keys['N'])
     
     asd = asd - 1
     tasd = 0
@@ -57,8 +60,8 @@ def check_det_exp(matrix, X, Y, e, sx, sy, se, detB, keys, m):
         asd /= keys['N']
         tasd += 1
 
-    print(tasd)
-    print(asd % keys['N'])
+    #print(tasd)
+    #print(asd % keys['N'])
 
     print("{} - {}".format(sx, tx))
     print("{} - {}".format(sy, ty))
