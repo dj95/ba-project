@@ -46,22 +46,9 @@ def main():
     # calculate upper bounds for roots
     alpha = log(keys['e'], keys['N'])
 
-    print(delta < (1/2 - sqrt(alpha/7)))
-
-    if keys['p'] < keys['q']:
-        print(keys['q'] < 2 * keys['p'])
-    else:
-        print(keys['p'] < 2 * keys['q'])
-
-    print(alpha + delta - 0.25)
-    X = ceil(keys['N']^(alpha + delta - 0.5))
-    Y = ceil(keys['N']^(0.5))
-
-    #X = long(max(keys['kp'] + 1, keys['kq'] + 1))
-    #Y = long(max(keys['p'] + 1, keys['q'] + 1))
-
-    print(keys['dp'] < keys['N']^delta)
-    print(keys['dq'] < keys['N']^delta)
+    # calculate bounds for xp1, xp2, xq1, xq2, yp, yq
+    X = ceil(keys['e'] * keys['N']^(delta - 0.5))
+    Y = 2*ceil(keys['N']^(0.5))
 
     # print some stats
     if not jsonoutput:
@@ -75,30 +62,11 @@ def main():
         pprint('kp = {}'.format(keys['kp']))
         pprint('kq = {}'.format(keys['kq']))
         pprint('|N| = {} Bit'.format(bit_length))
-        pprint('kp < X {}'.format(keys['kp'] < X))
-        pprint('kq < X {}'.format(keys['kq'] < X))
-        pprint('p < Y {}'.format(keys['p'] < Y))
-        pprint('q < Y {}'.format(keys['q'] < Y))
-
-        pprint('{}'.format(
-            keys['e']*keys['dp'] == 1 + keys['kp'] * (keys['p'] - 1)
-                    ))
-        pprint('{}'.format(
-                keys['e']*keys['dq'] == 1 + keys['kq'] * (keys['q'] - 1)
-                    ))
-
-        pprint('{}'.format(
-            (X^4 * Y^2) < keys['e']^m
-                    ))
-
         pprint('starting coppersmith with')
         pprint('m = {}    tau = {}'.format(m, tau))
 
-    pprint('alpha >= 7/16: {}'.format(alpha >= 7/16))
-    pprint('delta < 1/2 - sqrt(alpha/7): {}'.format(delta < (1/2) - sqrt(alpha / 7)))
-
     # generate the lattice for our parameters
-    matrix, col_indice, polynomials_tuple, row_index, detB, sx, sy, se = generate_lattice(
+    matrix, col_indice, polynomials_tuple, row_index, detB = generate_lattice(
             keys['N'],
             keys['e'],
             X, Y,
@@ -108,7 +76,7 @@ def main():
             jsonoutput
             )
 
-    #NOTE: check the dimension: in the paper its 180 for m=8
+    # check if the matrix is sqaured
     if matrix.nrows() == matrix.ncols():
         if not jsonoutput:
             pprint("squared matrix          [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
@@ -131,28 +99,28 @@ def main():
 
     matrix = array_to_matrix(matrix)
 
-    matrix = set_upper_bound(matrix, X, Y, inverted_col_indice, keys['e'], m)
-
     # substitute N from the diagonal
     matrix = substitute_N(matrix, keys['N'], keys['e'], m, X, Y)
 
-    #for i in range(matrix.nrows()):
-    #    ui = matrix[i, i]
-    #    while ui % keys['e'] == 0 and ui != 0:
-    #        ui = ui / keys['e']
-    #    if matrix[i, i] % (keys['N'] - 1) == 0 and matrix[i, i] != 0:
-    #        print('reduced: {}'.format(ui))
-    #        print(polynomials_tuple[i])
+    # create g(xX, yY)
+    matrix = set_upper_bound(matrix, X, Y, inverted_col_indice, keys['e'], m)
 
     detL = matrix.determinant()
-    pprint(' detB == detL : {}'.format(abs(detL) == abs(detB)))
-    pprint(' detB < e^nm == {}'.format(abs(detB) < keys['e']^(matrix.ncols() * m)))
-    #print(abs(detB))
-    #print(keys['e']^(matrix.ncols() * m))
-    #check_det_exp(matrix, X, Y, keys['e'], sx, sy, se, detB, keys, m)
-    
+    if not jsonoutput:
+        # print if the matrix determinant is equal to the papers one
+        if abs(detL) == abs(detB):
+            pprint("determinant correct     [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        else:
+            pprint("determinant correct     [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
-    #return
+        # print if the determinant is < e^nm
+        if abs(detB) < (keys['e']^(matrix.ncols() * m)):
+            pprint("det is small enough     [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        else:
+            pprint("det is small enough     [" + Fore.RED + " failed " + Fore.RESET + "]") 
+
+    #NOTE: for debugging purposes only
+    #check_det_exp(matrix, X, Y, keys['e'], sx, sy, se, detB, keys, m)
 
     substituted_polynomials = []
 
@@ -243,11 +211,10 @@ def main():
     # initialize an array for the polynomials
     polynom_vector, reduced_polynomials = [], []
 
+    # calculate det(L)^(1/n) for a check that the LLL worked
     detL = abs(reduced_matrix.determinant())
     detL = sqrt(detL, reduced_matrix.ncols())
     detL = long(ceil(detL))
-
-    pprint(' Check ||v|| < det(L)^(1/n)')
 
     # iterate through the rows of the reduced coefficient matrix
     for row in reduced_matrix.rows():
@@ -289,35 +256,28 @@ def main():
         # append the polynomials to the reduced polynomials array
         reduced_polynomials.append(p)
 
+        # get the square root for the euclidian norm of the vector
         howgrave = floor(sqrt(howgrave_sum))
-
-        #if howgrave < detL:
-        #    print('  -> True')
-        #else:
-        #    print('  -> False')
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
-        if howgrave < keys['e']^m:
+        if howgrave < ((keys['e']^m) / sqrt(monome_count)):
             # append the polynomial to the polunomial vector for calculating the
             # groebner basis
             polynom_vector.append(p)
 
     # check the roots of the reduced polynomials
-    if reduced_root_check(reduced_polynomials, keys, debug, m):
+    if reduced_root_check(polynom_vector, keys, debug, m):
         if not jsonoutput:
             pprint("reduced root check      [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+            pprint('create ideal with {} polynoms'.format(len(polynom_vector)))
     else:
         if not jsonoutput:
             pprint("reduced root check      [" + Fore.RED + " failed " + Fore.RESET + "]") 
+            pprint('create ideal with {} polynoms'.format(len(polynom_vector)))
 
-    if not jsonoutput:
-    #    pprint("det(M) = {}".format(reduced_matrix.det()))
-    #    pprint("howgrave = {}".format(reduced_matrix.det() < keys['e']^(reduced_matrix.ncols() * m)))
 
-        # create an ideal out of the polunomial vector
-        pprint('create ideal with {} polynoms'.format(len(polynom_vector)))
-
+    #NOTE: for debugging purposes only
     #new_pv = []
     #for p in polynom_vector:
     #    new_pv.append(p(xp1 = (keys['kq'] - 1)))
@@ -330,17 +290,18 @@ def main():
     if not nogroebner:
         # create an ideal from the polynom vector
         I = Ideal(polynom_vector)
-        if not jsonoutput:
 
+        # calculate the groebner basis with verbose on or off
+        if not jsonoutput:
             pprint('calculate groebner basis')
             B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
         else:
             B = I.groebner_basis(algorithm='libsingular:slimgb', prot=False)
 
         # print the basis
-        #print(B)
         if not jsonoutput:
             pprint('basis length: {}'.format(len(B)))
+
         # print json output
         else:
             output = {}
@@ -357,8 +318,8 @@ def main():
 
         #if len(B) >= 6:
         for row in B:
-            if not jsonoutput:
-                print(row)
+            #if not jsonoutput:
+            #    print(row)
 
 
             #print(row.dict())
@@ -369,7 +330,7 @@ def main():
             eq1 = 0
 
             for monom in row.dict():
-                print("{} - {}".format(monom, row.dict()[monom]))
+                #print("{} - {}".format(monom, row.dict()[monom]))
                 m = row.dict()[monom] * x1^monom[0] * x2^monom[1] * y1^monom[4] * y2^monom[5] * x3^monom[2] * x4^monom[3]
                 eq1 += m
 
@@ -377,11 +338,11 @@ def main():
 
             equations.append(eq)
 
-        for row in equations:
-            print(row)
+        #for row in equations:
+        #    print(row)
 
 
-        print(solve(equations, x1, x2, y1, y2))
+        print(solve(equations, x1, x2, x3, x4, y1, y2))
 
 
 # execute the main function, if the script is called on the commandline
