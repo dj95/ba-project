@@ -239,16 +239,28 @@ def main():
                 monome_count += 1
 
             # set the correct grade to the variables of each monomial
-            x_p_1 = (xp1 / X)^int(monom_grade[0])
-            x_p_2 = (xp2 / X)^int(monom_grade[1])
-            x_q_1 = (xq1 / X)^int(monom_grade[2])
-            x_q_2 = (xq2 / X)^int(monom_grade[3])
-            y_p = (yp / Y)^int(monom_grade[4])
-            y_q = (yq / Y)^int(monom_grade[5])
+            x_p_1 = (xp1)^int(monom_grade[0])
+            x_p_2 = (xp2)^int(monom_grade[1])
+            x_q_1 = (xq1)^int(monom_grade[2])
+            x_q_2 = (xq2)^int(monom_grade[3])
+            y_p = (yp)^int(monom_grade[4])
+            y_q = (yq)^int(monom_grade[5])
 
             # add the absolute value of the coefficient squared for howgrave
             # grahams theorem howgrave_sum += abs(coefficient)^2
             howgrave_sum += abs(coefficient)^2
+
+            exp_xp1 = int(monom_grade[0])
+            exp_xp2 = int(monom_grade[1])
+            exp_xq1 = int(monom_grade[2])
+            exp_xq2 = int(monom_grade[3])
+            exp_yp = int(monom_grade[4])
+            exp_yq = int(monom_grade[5])
+
+            x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+            y_bound = Y^(exp_yp + exp_yq)
+
+            coefficient = int((coefficient) / (x_bound * y_bound))
 
             # add the monomial multiplied with its coefficient to the polunomial
             p += (coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q)
@@ -286,10 +298,11 @@ def main():
     #print(polynom_vector)
 
     pol = polynom_vector[0]
-    r1 = polynom_vector[1].resultant(pol)
-    r2 = polynom_vector[2].resultant(pol)
-    print(r1)
-    print(r2)
+    print(pol.parent())
+    #r1 = polynom_vector[1].resultant(pol)
+    #print(r1)
+    #r2 = polynom_vector[2].resultant(pol)
+    #print(r2)
 
     # calculate the groebner basis
     if not nogroebner:
