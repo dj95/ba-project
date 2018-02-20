@@ -9,6 +9,66 @@
 # (c) 2018 - Daniel Jankowski
 
 
+def optimize_tau(e, m, X, Y, N):
+    # calculate determinant according to the paper
+    n  = 0
+    sx = 0
+    sy = 0
+    se = 0
+
+    alpha = log(e, N)
+    print(alpha)
+    tau = 0.5
+    saved_delta = 0
+    saved_tau = 0
+
+    while tau <= 1:
+        # initialize the generator for the last index set
+        I_x = index_set_x(m, tau)
+
+        # iterate through the last first set
+        for (i1, i2, j1, j2, u) in I_x:
+            n += 1
+            sx += (i1 + i2 + j1 + j2 + 2*u) 
+            if (i1 + i2) % 2 == 0:
+                sy += int(floor((i1 + i2) / 2))
+            else:
+                sy += int(ceil((i1 + i2) / 2))
+            se += (m - (i1 + i2 + u))
+
+        # initialize the generator for the last index set
+        I_y_p = index_set_y_p(m, tau)
+
+        # iterate through the second index set
+        for (i1, i2, j1) in I_y_p:
+            n += 1
+            sx += (i1 + i2)
+            sy += (ceil((i1 + i2) / 2) + j1)
+            se += (m - (i1 + i2))
+
+        # initialize the generator for the last index set
+        I_y_q = index_set_y_q(m, tau)
+
+        # iterate through the last index set
+        for (i1, i2, j2) in I_y_q:
+            n += 1
+            sx += (i1 + i2)
+            sy += (floor((i1 + i2) / 2) + j2)
+            se += (m - (i1 + i2))
+
+        # (alpha + delta - 1/2)sx + 1/2sy + alphase = nm
+        delta = ((((1/2) - alpha)*sx) + (n*m) - ((1/2)*sy) - alpha*se) / sx
+        print(delta)
+        if delta > saved_delta:
+            saved_delta = delta
+            saved_tau = tau
+        tau += 0.001
+
+    detB = (X^sx) * (Y^sy) * (e^se)
+    print(detB < e^(n*m))
+    return tau
+
+
 def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     """
     Generate the lattice for the coppersmith variant of
@@ -22,6 +82,8 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     load('./utils.sage')
 
     R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+
+    tau = optimize_tau(e, m, X, Y, N)
 
     # initial values
     coeffs = {}
@@ -191,11 +253,11 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     # iterate through the last first set
     for (i1, i2, j1, j2, u) in I_x:
         sx += (i1 + i2 + j1 + j2 + 2*u) 
-        if i1 + i2 % 2 == 0:
+        if (i1 + i2) % 2 == 0:
             sy += int(floor((i1 + i2) / 2))
         else:
             sy += int(ceil((i1 + i2) / 2))
-        se += (m - (i1 + i2 +u))
+        se += (m - (i1 + i2 + u))
 
     # initialize the generator for the last index set
     I_y_p = index_set_y_p(m, tau)
@@ -215,7 +277,8 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
         sy += (floor((i1 + i2) / 2) + j2)
         se += (m - (i1 + i2))
 
-    detB = X^sx * Y^sy * e^se
+    detB = (X^sx) * (Y^sy) * (e^se)
+    print(detB < e^(m*matrix.ncols()))
 
     # return the lattice and its multigrade-column-relation
     return matrix, col_indice, polynomials, row_index, detB, sx, sy, se

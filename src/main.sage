@@ -147,8 +147,8 @@ def main():
     detL = matrix.determinant()
     pprint(' detB == detL : {}'.format(abs(detL) == abs(detB)))
     pprint(' detB < e^nm == {}'.format(abs(detB) < keys['e']^(matrix.ncols() * m)))
-    print(abs(detB))
-    print(keys['e']^(matrix.ncols() * m))
+    #print(abs(detB))
+    #print(keys['e']^(matrix.ncols() * m))
     #check_det_exp(matrix, X, Y, keys['e'], sx, sy, se, detB, keys, m)
     
 
@@ -291,10 +291,10 @@ def main():
 
         howgrave = floor(sqrt(howgrave_sum))
 
-        if howgrave < detL:
-            print('  -> True')
-        else:
-            print('  -> False')
+        #if howgrave < detL:
+        #    print('  -> True')
+        #else:
+        #    print('  -> False')
 
         # howgrave-grahams lemma in order to get polynoms, which are
         # small enough
