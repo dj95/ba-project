@@ -285,6 +285,11 @@ def main():
 
     #print(polynom_vector)
 
+    pol = polynom_vector[0]
+    r1 = polynom_vector[1].resultant(pol)
+    r2 = polynom_vector[2].resultant(pol)
+    print(r1)
+    print(r2)
 
     # calculate the groebner basis
     if not nogroebner:
@@ -297,6 +302,14 @@ def main():
             B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
         else:
             B = I.groebner_basis(algorithm='libsingular:slimgb', prot=False)
+
+        for equation in B:
+            print(equation)
+            foo = equation.factor()
+            print(foo)
+            print('===============')
+        J = Ideal(B)
+        print(J.variety(ring=ZZ))
 
         # print the basis
         if not jsonoutput:

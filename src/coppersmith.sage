@@ -11,6 +11,8 @@
 
 import sys
 
+from colorama import Fore, Back, Style
+
 
 def determinant_paper(X, Y, e, m, tau):
     """
@@ -129,13 +131,15 @@ def optimize_tau(e, m, X, Y, N):
         # increase tau
         tau += 0.001
 
+    pprint("upper theoretical bound: {}".format(saved_delta))
+
     # calculate the bound according to the papers formula
     detB = (X^sx) * (Y^sy) * (e^se)
 
     # if the determinant doesnt fulfill howgrave graham...
     if not (detB < e^(n*m)):
         # ...exit with an error
-        sys.exit(-1)
+        pprint("[ " + Fore.YELLOW + "WARNING" + Fore.RESET + " ] determinant lower than e^nm")
 
     # otherwise return the optimal tau
     return tau
