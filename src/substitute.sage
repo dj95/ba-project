@@ -23,7 +23,7 @@ def substitute_y(polynomial, N, e, m):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # iterate through the multigrades
     for multigrade in polynomial_dict:
@@ -96,7 +96,7 @@ def substitute_x(polynomial, e, m):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # iterate through every monomes multigrade
     for multigrade in polynomial_dict:
@@ -167,7 +167,7 @@ def substitute_xp(polynomial):
     output_polynomial = 0
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # iterate through every monomes multigrade
     for multigrade in polynomial_dict:

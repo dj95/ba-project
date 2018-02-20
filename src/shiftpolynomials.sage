@@ -14,7 +14,7 @@ def g(i1, i2, j1, j2, u, N, e, m):
     load('./substitute.sage')
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     fp1_val = fp1_sub_xp1(N, e, m)
     fp2_val = fp2_sub_xp2(N, e, m)
@@ -43,7 +43,7 @@ def gp(i1, i2, j1, N, e, m):
     load('./polynomials.sage')
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     fp1_val = fp1_sub_xp1(N, e, m)
     fp2_val = fp2_sub_xp2(N, e, m)
@@ -65,7 +65,7 @@ def gq(i1, i2, j2, N, e, m):
     load('./polynomials.sage')
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     fp1_val = fp1_sub_xp1(N, e, m)
     fp2_val = fp2_sub_xp2(N, e, m)

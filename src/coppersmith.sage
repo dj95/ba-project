@@ -158,7 +158,7 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     load('./utils.sage')
 
     # get ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # get an optimized tau
     tau = optimize_tau(e, m, X, Y, N)

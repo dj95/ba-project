@@ -11,7 +11,7 @@
 
 def h(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = (N*xp2*xq1 - xp1*xq2)
 
@@ -20,7 +20,7 @@ def h(N, e, m):
 
 def fp1(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = N + xp1*(N - yp)
 
@@ -29,7 +29,7 @@ def fp1(N, e, m):
 
 def fp2(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = 1 + xp2*(yp - 1)
 
@@ -38,7 +38,7 @@ def fp2(N, e, m):
 
 def fq1(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = 1 + xq1*(yq - 1)
 
@@ -47,7 +47,7 @@ def fq1(N, e, m):
 
 def fq2(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = N + xq2*(N - yq)
 
@@ -56,7 +56,7 @@ def fq2(N, e, m):
 
 def fp1_sub_xp1(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = (N*xq1 - xp1*yp)
 
@@ -65,7 +65,7 @@ def fp1_sub_xp1(N, e, m):
 
 def fp2_sub_xp2(N, e, m):
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     polynomial = (-xq2 + xp2*yp)
 

@@ -41,7 +41,7 @@ def main():
             )
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='deglex')
 
     # calculate upper bounds for roots
     alpha = log(keys['e'], keys['N'])
@@ -86,7 +86,7 @@ def main():
             pprint('[' + Fore.RED + ' ERROR ' + Fore.RESET + '] got a {}x{} matrix'.format(matrix.nrows(), matrix.ncols()))
 
     # define the polynomial ring
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # get polynomials from polynomials tuple
     polynomials = [value[0] for value in polynomials_tuple]

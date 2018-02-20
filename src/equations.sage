@@ -14,7 +14,7 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
     The first shift polunomial with the substitutions.
     """
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # initialize the polynom
     p = 0
@@ -86,7 +86,7 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
 
 def h_u_check(i1, i2, j1, j2, u, N, e, m):
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # initialize the polynom
     p = 0
@@ -142,7 +142,7 @@ def h_u_check(i1, i2, j1, j2, u, N, e, m):
 
 def g_p_check_before_y_sub(i1, i2, j1, N, e, m):
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # initialize the polynom
     p = 0
@@ -172,7 +172,7 @@ def g_p_check_before_y_sub(i1, i2, j1, N, e, m):
 
 def g_p_check(i1, i2, j1, N, e, m, substitute=True):
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # initialize the polynom
     p = 0
@@ -241,7 +241,7 @@ def g_p(i1, i2, j1, N, e, m, X, Y):
     like in the proof on page 31/32.
     """
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # initialize the polynom
     p = 0
@@ -309,7 +309,7 @@ def g_p(i1, i2, j1, N, e, m, X, Y):
 
 def g_q_check(i1, i2, j2, N, e, m):
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # initialize the polynom
     p = 0
@@ -367,7 +367,7 @@ def g_q(i1, i2, j2, N, e, m, X, Y):
     by + j2 for the third polynomial instead of the second one.
     """
     # define the integer ring and its variables
-    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='lp')
+    R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
 
     # initialize the polynom
