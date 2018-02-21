@@ -63,7 +63,7 @@ def main():
         pprint('kq = {}'.format(keys['kq']))
         pprint('|N| = {} Bit'.format(bit_length))
         pprint('starting coppersmith with')
-        pprint('m = {}    tau = {}'.format(m, tau))
+        pprint('m = {}    tau = optimized'.format(m))
 
     # generate the lattice for our parameters
     matrix, col_indice, polynomials_tuple, row_index, detB = generate_lattice(
@@ -260,7 +260,7 @@ def main():
             x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
             y_bound = Y^(exp_yp + exp_yq)
 
-            coefficient = int((coefficient) / (x_bound * y_bound))
+            coefficient = ((coefficient) / (x_bound * y_bound))
 
             # add the monomial multiplied with its coefficient to the polunomial
             p += (coefficient * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q)
@@ -295,15 +295,6 @@ def main():
     #    new_pv.append(p(xp1 = (keys['kq'] - 1)))
     #polynom_vector = new_pv
 
-    #print(polynom_vector)
-
-    pol = polynom_vector[0]
-    print(pol.parent())
-    #r1 = polynom_vector[1].resultant(pol)
-    #print(r1)
-    #r2 = polynom_vector[2].resultant(pol)
-    #print(r2)
-
     # calculate the groebner basis
     if not nogroebner:
         # create an ideal from the polynom vector
@@ -312,17 +303,9 @@ def main():
         # calculate the groebner basis with verbose on or off
         if not jsonoutput:
             pprint('calculate groebner basis')
-            B = I.groebner_basis(algorithm='libsingular:slimgb', prot=True)
+            B = I.groebner_basis(algorithm='libsingular:groebner', prot=True)
         else:
-            B = I.groebner_basis(algorithm='libsingular:slimgb', prot=False)
-
-        for equation in B:
-            print(equation)
-            foo = equation.factor()
-            print(foo)
-            print('===============')
-        J = Ideal(B)
-        print(J.variety(ring=ZZ))
+            B = I.groebner_basis(algorithm='libsingular:groebner', prot=False)
 
         # print the basis
         if not jsonoutput:
@@ -344,14 +327,6 @@ def main():
 
         #if len(B) >= 6:
         for row in B:
-            #if not jsonoutput:
-            #    print(row)
-
-
-            #print(row.dict())
-            
-            #if len(row.dict()) == 1:
-            #    print(row % keys['e'])
 
             eq1 = 0
 
@@ -363,10 +338,6 @@ def main():
             eq = eq1 == 0
 
             equations.append(eq)
-
-        #for row in equations:
-        #    print(row)
-
 
         print(solve(equations, x1, x2, x3, x4, y1, y2))
 
