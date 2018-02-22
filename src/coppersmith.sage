@@ -131,6 +131,7 @@ def optimize_tau(e, m, X, Y, N):
         # increase tau
         tau += 0.001
 
+    pprint('tau = {} (optimized)'.format(tau))
     pprint("upper theoretical bound: {}".format(saved_delta))
 
     # calculate the bound according to the papers formula

@@ -63,7 +63,7 @@ def main():
         pprint('kq = {}'.format(keys['kq']))
         pprint('|N| = {} Bit'.format(bit_length))
         pprint('starting coppersmith with')
-        pprint('m = {}    tau = optimized'.format(m))
+        pprint('m = {}'.format(m))
 
     # generate the lattice for our parameters
     matrix, col_indice, polynomials_tuple, row_index, detB = generate_lattice(
