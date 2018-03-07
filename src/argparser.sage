@@ -3,8 +3,7 @@
 # ba-proj
 #
 # This project is the implementation of the small
-# CRT-RSA attack of Takayusa, Lu and Peng utilizing
-# the coppersmith and L3 algorithm.
+# CRT-RSA attack of Takayusa, Lu and Peng utilizing the coppersmith and L3 algorithm.
 #
 # (c) 2018 - Daniel Jankowski
 
@@ -78,14 +77,6 @@ def parse_args():
             default=False
             )
     parser.add_argument(
-            '--forcetriangle',
-            help='Force a triangular matrix',
-            dest='forcetriangle',
-            action='store_const',
-            const=True,
-            default=False
-            )
-    parser.add_argument(
             '--print',
             help='Print the matrix to tech',
             dest='printmatrix',
@@ -108,4 +99,4 @@ def parse_args():
     args = parser.parse_args()
 
     # and return them
-    return args.d, args.m, args.s, args.t, args.debug, args.test, args.nogroebner, args.noreduction, args.forcetriangle, args.printmatrix, args.json
+    return args.d, args.m, args.s, args.t, args.debug, args.test, args.nogroebner, args.noreduction, args.printmatrix, args.json

@@ -68,7 +68,7 @@ def determinant_paper(X, Y, e, m, tau):
     return detB
 
 
-def optimize_tau(e, m, X, Y, N):
+def optimize_tau(e, m, X, Y, N, jsonoutput):
     """
     Brute force the optimal tau for the lattice attack.
     Calculate the determinant and check if its smaller
@@ -131,8 +131,9 @@ def optimize_tau(e, m, X, Y, N):
         # increase tau
         tau += 0.001
 
-    pprint('tau = {} (optimized)'.format(tau))
-    pprint("upper theoretical bound: {}".format(saved_delta))
+    if not jsonoutput:
+        pprint('tau = {} (optimized)'.format(tau))
+        pprint("upper theoretical bound: {}".format(saved_delta))
 
     # calculate the bound according to the papers formula
     detB = (X^sx) * (Y^sy) * (e^se)
@@ -162,7 +163,7 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     R.<xp1, xp2, xq1, xq2, yp, yq > = PolynomialRing(ZZ, order='deglex')
 
     # get an optimized tau
-    tau = optimize_tau(e, m, X, Y, N)
+    tau = optimize_tau(e, m, X, Y, N, jsonoutput)
 
     # initial values
     coeffs = {}
@@ -322,4 +323,4 @@ def generate_lattice(N, e, X, Y, m=8, tau=0.75, debug=False, jsonoutput=False):
     detB = determinant_paper(X, Y, e, m, tau)
 
     # return the lattice and its multigrade-column-relation
-    return matrix, col_indice, polynomials, row_index, detB
+    return matrix, col_indice, polynomials, row_index, detB, tau

@@ -16,7 +16,7 @@ from functools import reduce
 from math import log
 
 
-def generate_keys(bit_length=1024, delta=0.090):
+def generate_keys(bit_length=1024, delta=0.020, m=4):
     """
     Generate p, q, N, dp, dq, d, e for CRT-RSA with
     small dp and dq for the given bit size.
@@ -27,24 +27,29 @@ def generate_keys(bit_length=1024, delta=0.090):
     # generate primes for rsa
     p = number.getPrime(int(bit_length // 2))
     q = number.getPrime(int(bit_length // 2))
-    #q = number.getPrime(bit_length // 2)
 
     # calculate the N
     N = p * q
 
     # get our boundary for the attack so we are able to compute
     # small dp's and dq's
+    #TODO: find a way to calculate this with big N
     boundary = N ** delta
 
     # get random smal dp and dq with the calculated boundary
     dp = ZZ.random_element(2, int(boundary) - 1)
     dq = ZZ.random_element(2, int(boundary) - 1)
 
+
     # get the related e to our d
     try:
         d = crt(dp, dq, p - 1, q - 1)
 
         e = inverse_mod(d, (p - 1) * (q - 1))
+
+        # make sure N and (N - 1) can be inverted in e^m
+        if gcd(e**m, N) != 1 or gcd(e**m, N - 1) != 1:
+            keys = generate_keys(bit_length, delta, m)
 
         # calculate the kq and kp  
         kp = ((e*dp) - 1) /  (p - 1)
@@ -63,14 +68,14 @@ def generate_keys(bit_length=1024, delta=0.090):
                 }
 
         if kp == 0 or kq == 0:
-            keys = generate_keys(bit_length, delta)
+            keys = generate_keys(bit_length, delta, m)
 
     except ZeroDivisionError:
         # if no inverse exists, start all over again
-        keys = generate_keys(bit_length, delta)
+        keys = generate_keys(bit_length, delta, m)
     except ValueError:
         # if crt does not work
-        keys = generate_keys(bit_length, delta)
+        keys = generate_keys(bit_length, delta, m)
 
     return keys
 

@@ -9,6 +9,9 @@
 # (c) 2018 - Daniel Jankowski
 
 
+import datetime
+import time
+
 from colorama import Fore, Back, Style
 
 
@@ -28,7 +31,7 @@ def main():
     load('./test.sage')
 
     # parse arguments
-    delta, m, bit_length, tau, debug, test, nogroebner, noreduction, forcetriangle, printmatrix, jsonoutput = parse_args()
+    delta, m, bit_length, tau, debug, test, nogroebner, noreduction, printmatrix, jsonoutput = parse_args()
 
     # test the lll algorithm
     if test:
@@ -37,8 +40,12 @@ def main():
     # generate a complete crt-rsa keyset with the given parameters
     keys = generate_keys(
             bit_length=bit_length,
-            delta=delta
+            delta=delta,
+            m=m
             )
+
+    # start time for duration
+    start_time = time.mktime(datetime.datetime.now().timetuple())
 
     # define the polynomial ring
     R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='deglex')
@@ -49,6 +56,14 @@ def main():
     # calculate bounds for xp1, xp2, xq1, xq2, yp, yq
     X = ceil(keys['e'] * keys['N']^(delta - 0.5))
     Y = 2*ceil(keys['N']^(0.5))
+
+    # increase X bound until we can compute the inverse
+    while gcd(X, keys['e']**m) != 1:
+        X += 1
+
+    # increase Y bound until we can compute the inverse
+    if gcd(Y, keys['e']**m) != 1:
+        Y += 1
 
     # print some stats
     if not jsonoutput:
@@ -66,7 +81,7 @@ def main():
         pprint('m = {}'.format(m))
 
     # generate the lattice for our parameters
-    matrix, col_indice, polynomials_tuple, row_index, detB = generate_lattice(
+    matrix, col_indice, polynomials_tuple, row_index, detB, tau = generate_lattice(
             keys['N'],
             keys['e'],
             X, Y,
@@ -95,7 +110,13 @@ def main():
     inverted_col_indice = dict((v,k) for k,v in col_indice.iteritems())
 
     # sort the matrix triangular
-    matrix, inverted_col_indice, row_index, polynomials_tuple = matrix_sort_triangle(matrix, inverted_col_indice, row_index, polynomials_tuple)
+    matrix, inverted_col_indice, row_index, polynomials_tuple = matrix_sort_triangle(
+            matrix,
+            inverted_col_indice,
+            row_index,
+            polynomials_tuple,
+            jsonoutput
+            )
 
     matrix = array_to_matrix(matrix)
 
@@ -195,10 +216,11 @@ def main():
         reduced_matrix = matrix
 
     # check if determinant is lower than e^nm
-    if (reduced_matrix.determinant() < keys['e']^(reduced_matrix.ncols() * m)):
-        pprint("det(B) < e^nm           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-    else:
-        pprint("det(B) < e^nm           [" + Fore.RED + " failed " + Fore.RESET + "]") 
+    if not jsonoutput:
+        if (reduced_matrix.determinant() < keys['e']^(reduced_matrix.ncols() * m)):
+            pprint("det(B) < e^nm           [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        else:
+            pprint("det(B) < e^nm           [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
     # it arg --print is true, print the matrix to tex file
     if printmatrix:
@@ -311,17 +333,6 @@ def main():
         if not jsonoutput:
             pprint('basis length: {}'.format(len(B)))
 
-        # print json output
-        else:
-            output = {}
-            output['m'] = m
-            output['tau'] = tau
-            output['delta'] = delta
-            output['matrix_dimension'] = reduced_matrix.ncols()
-            output['no_errors'] = True
-            output['bit_length'] = bit_length
-            print(output)
-
         equations = []
         x1, x2, x3, x4, y1, y2 = var('x1 x2 x3 x4 y1 y2')
 
@@ -332,14 +343,54 @@ def main():
 
             for monom in row.dict():
                 #print("{} - {}".format(monom, row.dict()[monom]))
-                m = row.dict()[monom] * x1^monom[0] * x2^monom[1] * y1^monom[4] * y2^monom[5] * x3^monom[2] * x4^monom[3]
-                eq1 += m
+                mon = row.dict()[monom] * x1^monom[0] * x2^monom[1] * y1^monom[4] * y2^monom[5] * x3^monom[2] * x4^monom[3]
+                eq1 += mon
 
             eq = eq1 == 0
 
             equations.append(eq)
 
-        print(solve(equations, x1, x2, x3, x4, y1, y2))
+        # solve the linear equations
+        results = solve(equations, x1, x2, x3, x4, y1, y2)
+
+        # print result
+        print(results)
+        recoverable = False
+
+        #TODO: check if p or q is in the solutions
+        #if type(results) == sage.structure.sequence.Sequence_generic:
+        #    for res in [ r.rhs() for r in results ]:
+        #        if res == keys['p'] or res == keys['p']:
+        #            print('Recovered!')
+        #            recoverable = True
+        #else:
+        #    for result in results:
+        #        for res in [ r.rhs() for r in result ]:
+        #            if res == keys['p'] or res == keys['p']:
+        #                print('Recovered!')
+        #                recoverable = True
+
+    # end time for duration
+    end_time = time.mktime(datetime.datetime.now().timetuple())
+
+    # check if its recoverable
+    if recoverable and not jsonoutput:
+        pprint('got p and q!')
+
+    # print json output
+    if jsonoutput:
+        output = {}
+        output['m'] = m
+        output['tau'] = tau
+        output['delta'] = delta
+        output['matrix_dimension'] = reduced_matrix.ncols()
+        output['no_errors'] = True
+        output['bit_length'] = bit_length
+        output['bit_length'] = bit_length
+        output['start_time'] = start_time
+        output['end_time'] = end_time
+        output['recoverable'] = recoverable
+        print(output)
 
 
 # execute the main function, if the script is called on the commandline

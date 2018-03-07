@@ -53,7 +53,7 @@ def create_column_index(matrix):
     return column_index
 
 
-def matrix_to_array(matrix):
+def matrix_to_array(matrix, jsonoutput):
     work_matrix = []
 
     zero_count = 0
@@ -74,10 +74,11 @@ def matrix_to_array(matrix):
                 non_zero_count += 1
             work_matrix[counter].append(value)
 
-    if non_zero_count > len(matrix[0]) and non_zero_count < zero_count:
-        pprint("triangle possible       [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
-    else:
-        pprint("triangle possible       [" + Fore.RED + " failed " + Fore.RESET + "]") 
+    if not jsonoutput:
+        if non_zero_count > len(matrix[0]) and non_zero_count < zero_count:
+            pprint("triangle possible       [" + Fore.GREEN + " passed " + Fore.RESET + "]") 
+        else:
+            pprint("triangle possible       [" + Fore.RED + " failed " + Fore.RESET + "]") 
 
     return work_matrix
 
@@ -195,12 +196,12 @@ def swap_cols(matrix, i, j):
     return matrix
 
 
-def matrix_sort_triangle(matrix, monom_index, polynom_index, polynomials_tuple):
+def matrix_sort_triangle(matrix, monom_index, polynom_index, polynomials_tuple, jsonoutput):
     """
     Sort the matrix rows that they form steps or a triangle.
     """
     # convert the matrix into an array matrix
-    work_matrix = matrix_to_array(matrix)
+    work_matrix = matrix_to_array(matrix, jsonoutput)
 
     # get an index for rows and cols, that counts values != 0
     row_index = create_row_index(work_matrix)
