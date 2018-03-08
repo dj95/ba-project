@@ -354,21 +354,19 @@ def main():
         results = solve(equations, x1, x2, x3, x4, y1, y2)
 
         # print result
-        print(results)
         recoverable = False
 
-        #TODO: check if p or q is in the solutions
-        #if type(results) == sage.structure.sequence.Sequence_generic:
-        #    for res in [ r.rhs() for r in results ]:
-        #        if res == keys['p'] or res == keys['p']:
-        #            print('Recovered!')
-        #            recoverable = True
-        #else:
-        #    for result in results:
-        #        for res in [ r.rhs() for r in result ]:
-        #            if res == keys['p'] or res == keys['p']:
-        #                print('Recovered!')
-        #                recoverable = True
+        # check if p or q is in the solutions
+        if type(results) == sage.structure.sequence.Sequence_generic:
+            try:
+                for res in [ r.rhs() for r in results ]:
+                    if res == keys['p'] or res == keys['p']:
+                        recoverable = True
+            except:
+                for result in results:
+                    for res in [ r.rhs() for r in result ]:
+                        if res == keys['p'] or res == keys['p']:
+                            recoverable = True
 
     # end time for duration
     end_time = time.mktime(datetime.datetime.now().timetuple())
@@ -389,6 +387,7 @@ def main():
         output['bit_length'] = bit_length
         output['start_time'] = start_time
         output['end_time'] = end_time
+        output['duration'] = end_time - start_time
         output['recoverable'] = recoverable
         print(output)
 
