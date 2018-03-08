@@ -141,7 +141,7 @@ def optimize_tau(e, m, X, Y, N, jsonoutput):
     # if the determinant doesnt fulfill howgrave graham...
     if not (detB < e^(n*m)) and not jsonoutput:
         # ...exit with an error
-        pprint("[ " + Fore.YELLOW + "WARNING" + Fore.RESET + " ] determinant lower than e^nm")
+        pprint("[ " + Fore.YELLOW + "WARNING" + Fore.RESET + " ] determinant greater than e^nm")
 
     # otherwise return the optimal tau
     return tau

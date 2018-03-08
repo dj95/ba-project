@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Arch Linux) (preloaded format=pdflatex 2017.11.16)  4 FEB 2018 18:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Arch Linux) (preloaded format=pdflatex 2018.3.4)  8 MAR 2018 14:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Matrix.tex
 (./Matrix.tex
 LaTeX2e <2017-04-15>
-Babel <3.15> and hyphenation patterns for 84 language(s) loaded.
+Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
 (/usr/share/texmf-dist/tex/latex/standalone/standalone.cls
 Document Class: standalone 2015/07/15 v1.2 Class to compile TeX sub-files stand
 alone
@@ -89,7 +89,7 @@ Package ifvtex Info: VTeX not detected.
 \Gm@dimlist=\toks17
 )
 (/usr/share/texmf-dist/tex/latex/mathtools/mathtools.sty
-Package: mathtools 2017/10/30 v1.20 mathematical typesetting tools
+Package: mathtools 2018/01/08 v1.21 mathematical typesetting tools
 
 (/usr/share/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2014/10/28 v4.3 Infix arithmetic (KKT,FJ)
@@ -199,10 +199,10 @@ File: uni-global.def 2013/05/13 UCS: Unicode global data
 \uc@temptokena=\toks27
 )
 (/usr/share/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2017/11/03 3.15 The Babel package
+Package: babel 2018/02/14 3.18 The Babel package
 
 (/usr/share/texmf-dist/tex/generic/babel/switch.def
-File: switch.def 2017/11/03 3.15 Babel switching mechanism
+File: switch.def 2018/02/14 3.18 Babel switching mechanism
 )
 (/usr/share/texmf-dist/tex/generic/babel-german/ngerman.ldf
 Language: ngerman 2016/11/02 v2.9 German support for babel (new orthography)
@@ -211,13 +211,12 @@ Language: ngerman 2016/11/02 v2.9 German support for babel (new orthography)
 Language: ngermanb 2016/11/02 v2.9 German support for babel (new orthography)
 
 (/usr/share/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2017/11/03 3.15 Babel common definitions
-
-(/usr/share/texmf-dist/tex/generic/babel/switch.def
-File: switch.def 2017/11/03 3.15 Babel switching mechanism
-)
+File: babel.def 2018/02/14 3.18 Babel common definitions
 \babel@savecnt=\count111
 \U@D=\dimen130
+
+(/usr/share/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@dirlevel=\count112
 )
 Package babel Info: Making " an active character on input line 125.
 )))
@@ -240,7 +239,7 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 Package graphics Info: Driver file: pdftex.def on input line 99.
 
 (/usr/share/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2017/06/24 v1.0g Graphics/color driver for pdftex
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen131
 \Gin@req@width=\dimen132
@@ -263,23 +262,23 @@ Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 )
 (/usr/share/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count112
+\lst@mode=\count113
 \lst@gtempboxa=\box29
 \lst@token=\toks28
-\lst@length=\count113
+\lst@length=\count114
 \lst@currlwidth=\dimen133
-\lst@column=\count114
-\lst@pos=\count115
+\lst@column=\count115
+\lst@pos=\count116
 \lst@lostspace=\dimen134
 \lst@width=\dimen135
-\lst@newlines=\count116
-\lst@lineno=\count117
+\lst@newlines=\count117
+\lst@lineno=\count118
 \lst@maxwidth=\dimen136
 
 (/usr/share/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
-\c@lstnumber=\count118
-\lst@skipnumbers=\count119
+\c@lstnumber=\count119
+\lst@skipnumbers=\count120
 \lst@framebox=\box30
 )
 (/usr/share/texmf-dist/tex/latex/listings/listings.cfg
@@ -351,16 +350,16 @@ File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 )
 (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count120
+\scratchcounter=\count121
 \scratchdimen=\dimen137
 \scratchbox=\box31
-\nofMPsegments=\count121
-\nofMParguments=\count122
+\nofMPsegments=\count122
+\nofMParguments=\count123
 \everyMPshowfont=\toks29
-\MPscratchCnt=\count123
+\MPscratchCnt=\count124
 \MPscratchDim=\dimen138
-\MPnumerator=\count124
-\makeMPintoPDFobject=\count125
+\MPnumerator=\count125
+\makeMPintoPDFobject=\count126
 \everyMPtoPDFconversion=\toks30
 ) (/usr/share/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
@@ -391,7 +390,7 @@ Package etexcmds Info: Could not find \expanded.
 (etexcmds)             In the latter case, load this package earlier.
 )))
 (/usr/share/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
-Package: pdftexcmds 2017/03/19 v0.25 Utility functions of pdfTeX for LuaTeX (HO
+Package: pdftexcmds 2018/01/21 v0.26 Utility functions of pdfTeX for LuaTeX (HO
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
@@ -409,25 +408,26 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\c@lstlisting=\count126
+\c@lstlisting=\count127
  (./matrix.tex)
 Preview: Tightpage 0 0 0 0
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./Matrix.aux) ) 
 Here is how much of TeX's memory you used:
- 6310 strings out of 492985
- 90136 string characters out of 6138637
- 235007 words of memory out of 5000000
- 9765 multiletter control sequences out of 15000+600000
+ 6329 strings out of 492982
+ 90439 string characters out of 6138580
+ 810057 words of memory out of 5000000
+ 9786 multiletter control sequences out of 15000+600000
  4094 words of font info for 16 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,9n,68p,333b,221s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 39i,9n,68p,486b,221s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/sh
 are/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on Matrix.pdf (1 page, 17309 bytes).
+/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmr10.pfb>
+Output written on Matrix.pdf (1 page, 27768 bytes).
 PDF statistics:
- 16 PDF objects out of 1000 (max. 8388607)
- 10 compressed objects within 1 object stream
+ 20 PDF objects out of 1000 (max. 8388607)
+ 13 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

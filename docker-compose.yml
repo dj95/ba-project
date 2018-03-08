@@ -9,3 +9,4 @@ services:
         volumes:
             - ./src:/home/sage/
         container_name: coppersmith
+        command: ["/home/sage/main.sage", "-m", "6", "-s", "250", "-d", "0.035"]

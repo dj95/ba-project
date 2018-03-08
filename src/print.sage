@@ -17,15 +17,15 @@ def print_matrix(matrix, inverted_col_indice, row_index):
     tex_string = '\\begin{bmatrix}\n'
 
     # iterate through every value
-    for i in range(len(matrix[0])):
+    #for i in range(len(matrix[0])):
         # append the value with the divider to the tex string
-        tex_string = '{} {} &'.format(tex_string, inverted_col_indice[i])
+    #    tex_string = '{} {} &'.format(tex_string, inverted_col_indice[i])
 
         # increase the counter by 1
         #counter += 1
 
     # after each row, insert a new line and remove the last dividing character
-    tex_string = tex_string[:-1] + ' \\\\\n'
+    #tex_string = tex_string[:-1] + ' \\\\\n'
     
     r_counter = 0
 
@@ -38,10 +38,20 @@ def print_matrix(matrix, inverted_col_indice, row_index):
         for value in row:
             if counter == r_counter:
                 # append the value with the divider to the tex string
-                tex_string = '{} {} &'.format(tex_string, value)
+                if value > 0:
+                    tex_string = '{} {} &'.format(tex_string, '+')
+                elif value < 0:
+                    tex_string = '{} {} &'.format(tex_string, '-')
+                else:
+                    tex_string = '{} {} &'.format(tex_string, '.')
             else:
                 # append the value with the divider to the tex string
-                tex_string = '{} {} &'.format(tex_string, value)
+                if value > 0:
+                    tex_string = '{} {} &'.format(tex_string, '+')
+                elif value < 0:
+                    tex_string = '{} {} &'.format(tex_string, '-')
+                else:
+                    tex_string = '{} {} &'.format(tex_string, '.')
 
             # increase the counter by 1
             counter += 1

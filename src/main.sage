@@ -11,6 +11,8 @@
 
 import datetime
 import time
+import numpy
+import matplotlib.pyplot as plt
 
 from colorama import Fore, Back, Style
 
@@ -50,9 +52,6 @@ def main():
     # define the polynomial ring
     R.<xp1, xp2, xq1, xq2, yp, yq> = PolynomialRing(ZZ, order='deglex')
 
-    # calculate upper bounds for roots
-    alpha = log(keys['e'], keys['N'])
-
     # calculate bounds for xp1, xp2, xq1, xq2, yp, yq
     X = ceil(keys['e'] * keys['N']^(delta - 0.5))
     Y = 2*ceil(keys['N']^(0.5))
@@ -62,7 +61,7 @@ def main():
         X += 1
 
     # increase Y bound until we can compute the inverse
-    if gcd(Y, keys['e']**m) != 1:
+    while gcd(Y, keys['e']**m) != 1:
         Y += 1
 
     # print some stats
@@ -225,7 +224,20 @@ def main():
     # it arg --print is true, print the matrix to tex file
     if printmatrix:
         # substitute values != 0 by 1 in order to make the matrix readable
-        ones_matrix = matrix_to_ones(reduced_matrix, keys['N'])
+        ones_matrix = matrix_to_ones(matrix, keys['N'])
+
+        heatmap_matrix = numpy.array(matrix, dtype=numpy.float64)
+        for i in range(len(heatmap_matrix)):
+            for j in range(len(heatmap_matrix[i])):
+                if heatmap_matrix[i][j] > 0:
+                    heatmap_matrix[i][j] = math.log(heatmap_matrix[i][j], 2)
+                elif heatmap_matrix[i][j] < 0:
+                    heatmap_matrix[i][j] = - math.log(abs(heatmap_matrix[i][j]), 2)
+
+        plt.matshow(heatmap_matrix, cmap='hot')
+        plt.colorbar()
+        #plt.show()
+        #TODO: plot to file
 
         # print the matrix to file
         print_matrix(ones_matrix, inverted_col_indice, row_index)

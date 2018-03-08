@@ -34,7 +34,8 @@ def generate_keys(bit_length=1024, delta=0.020, m=4):
     # get our boundary for the attack so we are able to compute
     # small dp's and dq's
     #TODO: find a way to calculate this with big N
-    boundary = N ** delta
+    boundary = 2**(bit_length * delta)
+    #boundary = N ** delta
 
     # get random smal dp and dq with the calculated boundary
     dp = ZZ.random_element(2, int(boundary) - 1)

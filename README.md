@@ -44,3 +44,11 @@ optional arguments:
   --json           JSON output
 ```
 
+
+### Usage with docker
+
+Run `docker-compose up`.
+
+
+If you want to modify the parameters, check out the
+`./docker-compose.yml`.
