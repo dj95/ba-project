@@ -24,6 +24,26 @@ Please bear in mind that this project is still unfinished!
   - datetime
 
 
+### Further tasks
+
+- [ ] code capsulation for loops
+- [ ] better tests and plots
+- [ ] more object orientated programming
+- [ ] parameter check
+- [ ] d in [dp,dq]: disp. hamming weight
+- [ ] convert to pure python
+- [ ] sanity checks
+- [x] N^delta for big N
+- [ ] dp == dq
+- [x] solver timing + single timings
+- [ ] lattice as csv(reduced/unreduced)
+- [ ] lattice as heatmap
+- [ ] optimize matrix
+- [ ] optimize polynomials
+- [ ] optimize bound
+- [ ] code clean up and more readability
+
+
 ### Usage
 
 ```

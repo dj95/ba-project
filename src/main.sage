@@ -200,7 +200,16 @@ def main():
     # reduce it
     if not noreduction:
         try:
+            # start time for duration
+            start_time_lll = time.mktime(datetime.datetime.now().timetuple())
+
             reduced_matrix = matrix.LLL()
+
+            # start time for duration
+            end_time_lll = time.mktime(datetime.datetime.now().timetuple())
+
+            # calculate runtime in seconds of the lll
+            duration_lll = end_time_lll - start_time_lll
         except Exception as e:
             if not jsonoutput:
                 pprint("LLL-reduction           [" + Fore.RED + " failed " + Fore.RESET + "]") 
@@ -246,9 +255,9 @@ def main():
     polynom_vector, reduced_polynomials = [], []
 
     # calculate det(L)^(1/n) for a check that the LLL worked
-    detL = abs(reduced_matrix.determinant())
-    detL = sqrt(detL, reduced_matrix.ncols())
-    detL = long(ceil(detL))
+    #detL = abs(reduced_matrix.determinant())
+    #detL = sqrt(detL, reduced_matrix.ncols())
+    #detL = long(ceil(detL))
 
     # iterate through the rows of the reduced coefficient matrix
     for row in reduced_matrix.rows():
@@ -334,12 +343,21 @@ def main():
         # create an ideal from the polynom vector
         I = Ideal(polynom_vector)
 
+        # start time for duration
+        start_time_groebner = time.mktime(datetime.datetime.now().timetuple())
+
         # calculate the groebner basis with verbose on or off
         if not jsonoutput:
             pprint('calculate groebner basis')
             B = I.groebner_basis(algorithm='libsingular:groebner', prot=True)
         else:
             B = I.groebner_basis(algorithm='libsingular:groebner', prot=False)
+            
+        # start time for duration
+        end_time_groebner = time.mktime(datetime.datetime.now().timetuple())
+
+        # calculate runtime in seconds of the lll
+        duration_groebner = end_time_groebner - start_time_groebner
 
         # print the basis
         if not jsonoutput:
@@ -382,10 +400,16 @@ def main():
 
     # end time for duration
     end_time = time.mktime(datetime.datetime.now().timetuple())
+    duration = end_time - start_time
 
     # check if its recoverable
     if recoverable and not jsonoutput:
         pprint('got p and q!')
+
+    # print time stats
+    pprint('runtime LLL       {} sec'.format(duration_lll))
+    pprint('runtime groebner  {} sec'.format(duration_groebner))
+    pprint('runtime total     {} sec'.format(duration))
 
     # print json output
     if jsonoutput:
@@ -399,8 +423,10 @@ def main():
         output['bit_length'] = bit_length
         output['start_time'] = start_time
         output['end_time'] = end_time
-        output['duration'] = end_time - start_time
+        output['duration'] = duration
         output['recoverable'] = recoverable
+        output['duration_lll'] = duration_lll
+        output['duration_groebner'] = duration_groebner
         print(output)
 
 
