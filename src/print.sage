@@ -9,6 +9,56 @@
 # (c) 2018 - Daniel Jankowski
 
 
+def matrix_to_sizematrix(matrix):
+    # initialize numpy array with float64 for the heatmap
+    output_matrix = numpy.array(matrix, dtype=numpy.float64)
+
+    # iterate through every row
+    for i in range(len(output_matrix)):
+        # iterate through every value of each row
+        for j in range(len(output_matrix[i])):
+            # if the entry is greater than 0
+            if output_matrix[i][j] > 0:
+                # set the value to log base 2
+                output_matrix[i][j] = math.log(output_matrix[i][j], 2)
+            # if the entry is lower than 0
+            elif output_matrix[i][j] < 0:
+                # set the value to - log base 2
+                output_matrix[i][j] = - math.log(abs(output_matrix[i][j]), 2)
+
+    # return the matrix
+    return output_matrix
+
+
+def print_heatmap(heatmap_matrix, filename):
+    # initialize the figure to plot in to
+    fig = plt.figure()
+
+    # get the coordinate system
+    ax = fig.add_subplot(111)
+
+    # set labels for x and y
+    ax.set_xlabel('Monomials in $\{x_{p_1}, x_{p_2}, x_{q_1}, x_{q_2}, y_p, y_q \}$')
+    ax.set_ylabel('Polynomials (Sum of Monomials)')
+
+    # create the heatmap from the matrix 
+    im1 = ax.matshow(heatmap_matrix, cmap='coolwarm')
+
+    # set title for the axis
+    ax.set_title(
+            "Heatmap of monomial's size log(2) in " \
+            + "$%3d\\times%3d$ coefficient matrix after sort." \
+            %(len(heatmap_matrix), len(heatmap_matrix)),
+            fontsize="18"
+            )
+
+    # print the colorbar for the heatmap into the figure
+    fig.colorbar(im1, ax=ax)
+
+    # the the figure to a png
+    fig.savefig(filename, bbox_inches='tight')
+
+
 def print_matrix(matrix, inverted_col_indice, row_index):
     """
     Print the matrix in TeX-format to a file.

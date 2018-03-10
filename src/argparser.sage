@@ -53,30 +53,6 @@ def parse_args():
             default=False
             )
     parser.add_argument(
-            '--test',
-            help='Test the LLL algorithm',
-            dest='test',
-            action='store_const',
-            const=True,
-            default=False
-            )
-    parser.add_argument(
-            '--nogroebner',
-            help='Skip the groebner basis',
-            dest='nogroebner',
-            action='store_const',
-            const=True,
-            default=False
-            )
-    parser.add_argument(
-            '--noreduction',
-            help='Skip the LLL reduction',
-            dest='noreduction',
-            action='store_const',
-            const=True,
-            default=False
-            )
-    parser.add_argument(
             '--print',
             help='Print the matrix to tech',
             dest='printmatrix',
@@ -99,4 +75,4 @@ def parse_args():
     args = parser.parse_args()
 
     # and return them
-    return args.d, args.m, args.s, args.t, args.debug, args.test, args.nogroebner, args.noreduction, args.printmatrix, args.json
+    return args.d, args.m, args.s, args.t, args.debug, args.printmatrix, args.json

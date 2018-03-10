@@ -26,7 +26,7 @@ Please bear in mind that this project is still unfinished!
 
 ### Further tasks
 
-- [ ] code capsulation for loops
+- [x] code capsulation for loops
 - [ ] better tests and plots
 - [ ] more object orientated programming
 - [ ] parameter check
@@ -37,7 +37,7 @@ Please bear in mind that this project is still unfinished!
 - [ ] dp == dq
 - [x] solver timing + single timings
 - [ ] lattice as csv(reduced/unreduced)
-- [ ] lattice as heatmap
+- [x] lattice as heatmap
 - [ ] optimize matrix
 - [ ] optimize polynomials
 - [ ] optimize bound
@@ -47,21 +47,18 @@ Please bear in mind that this project is still unfinished!
 ### Usage
 
 ```
-usage: ./main.sage [-h] [-s S] [-d D] [-m M] [-t T] [--debug] [--test] 
-                   [--nogroebner] [--noreduction] [--print] [--json]
+usage: ./main.sage [-h] [-s S] [-d D] [-m M] [-t T] [--debug] [--print]
+                   [--json]
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -s S             bit size of N [default=1024]
-  -d D             delta [default=0.010]
-  -m M             m [default=8]
-  -t T             tau [default=0.75]
-  --debug          Print debug messages
-  --test           Test the LLL algorithm
-  --nogroebner     Skip the groebner basis
-  --noreduction    Skip the LLL reduction
-  --print          Print the matrix to tech
-  --json           JSON output
+  -h, --help  show this help message and exit
+  -s S        bit size of N [default=1024]
+  -d D        delta [default=0.010]
+  -m M        m [default=8]
+  -t T        tau [default=0.75]
+  --debug     Print debug messages
+  --print     Print the matrix to tech
+  --json      JSON output
 ```
 
 
