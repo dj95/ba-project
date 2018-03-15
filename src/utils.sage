@@ -109,8 +109,8 @@ def set_upper_bound(matrix, X, Y, col_index, e, m):
             exp_yq = int(monom_grade[5])
 
             # calculate the bounds for X and Y with their related exponents
-            x_bound = X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
-            y_bound = Y^(exp_yp + exp_yq)
+            x_bound = X**(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+            y_bound = Y**(exp_yp + exp_yq)
 
             # common bound for X and Y
             bound = x_bound * y_bound 
@@ -191,12 +191,12 @@ def evaluate_polynom(p, keys):
     # iterate through monomes
     for monom in poly:
         # set values in to the variables
-        x_p_1 = (keys['kq'] - 1)^int(monom[0])
-        x_p_2 = (keys['kp'])^int(monom[1])
-        x_q_1 = (keys['kq'])^int(monom[2])
-        x_q_2 = (keys['kp'] - 1)^int(monom[3])
-        y_p = (keys['p'])^int(monom[4])
-        y_q = (keys['q'])^int(monom[5])
+        x_p_1 = (keys['kq'] - 1)**int(monom[0])
+        x_p_2 = (keys['kp'])**int(monom[1])
+        x_q_1 = (keys['kq'])**int(monom[2])
+        x_q_2 = (keys['kp'] - 1)**int(monom[3])
+        y_p = (keys['p'])**int(monom[4])
+        y_q = (keys['q'])**int(monom[5])
 
         # multiply them with themselves and the coefficient
         value = poly[monom] * x_p_1 * x_p_2 * x_q_1 * x_q_2 * y_p * y_q
@@ -224,8 +224,8 @@ def root_check(polynomials, keys, debug, m):
         # because sage has problems with its return type
         y = evaluate_polynom(p, keys)
 
-        # we search for roots in e^m
-        y = y % keys['e']^m
+        # we search for roots in e**m
+        y = y % keys['e']**m
 
         # count the polynomials
         counter += 1

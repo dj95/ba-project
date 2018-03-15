@@ -48,7 +48,7 @@ Please bear in mind that this project is still unfinished!
 
 ```
 usage: ./main.sage [-h] [-s S] [-d D] [-m M] [-t T] [--debug] [--print]
-                   [--json]
+                   [--json] [--deltagen]
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -59,6 +59,7 @@ optional arguments:
   --debug     Print debug messages
   --print     Print the matrix to tech
   --json      JSON output
+  --deltagen  Generate table with theoretical deltas
 ```
 
 

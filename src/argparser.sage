@@ -68,6 +68,14 @@ def parse_args():
             const=True,
             default=False
             )
+    parser.add_argument(
+            '--deltagen',
+            help='Generate table with theoretical deltas',
+            dest='dgen',
+            action='store_const',
+            const=True,
+            default=False
+            )
     
     #TODO: add testing flag
 
@@ -75,4 +83,4 @@ def parse_args():
     args = parser.parse_args()
 
     # and return them
-    return args.d, args.m, args.s, args.t, args.debug, args.printmatrix, args.json
+    return args.d, args.m, args.s, args.t, args.debug, args.printmatrix, args.json, args.dgen

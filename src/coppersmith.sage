@@ -62,24 +62,74 @@ def determinant_paper(X, Y, e, m, tau):
         se += (m - (i1 + i2))               # exponent for e
 
     # calculate the bound according to the papers formula
-    detB = (X^sx) * (Y^sy) * (e^se)
+    detB = (X**sx) * (Y**sy) * (e**se)
 
     # return the determinant
     return detB
+
+
+def calculate_theoretical_delta(m, tau, N, e):
+    # initialize variables
+    n = sx = sy = se = 0
+
+    # calculate alpha in e = N**alpha
+    alpha = log(e, N)
+
+    # initialize the generator for the last index set
+    I_x = index_set_x(m, tau)
+
+    # iterate through the last first set
+    for (i1, i2, j1, j2, u) in I_x:
+        n += 1                              # dimension
+                                            # determinant exponents below
+        sx += (i1 + i2 + j1 + j2 + 2*u)     # exponent for X
+        if (i1 + i2) % 2 == 0:              #
+            sy += int(floor((i1 + i2) / 2)) # exponent for Y with even (i1 + i2)
+        else:                               #
+            sy += int(ceil((i1 + i2) / 2))  # exponent for Y with odd (i1 + i2)
+        se += (m - (i1 + i2 + u))           # exponent for e
+
+    # initialize the generator for the last index set
+    I_y_p = index_set_y_p(m, tau)
+
+    # iterate through the second index set
+    for (i1, i2, j1) in I_y_p:
+        n += 1                              # dimension
+                                            # determinant exponents below
+        sx += (i1 + i2)                     # exponent for X
+        sy += (ceil((i1 + i2) / 2) + j1)    # exponent for Y
+        se += (m - (i1 + i2))               # exponent for e
+
+    # initialize the generator for the last index set
+    I_y_q = index_set_y_q(m, tau)
+
+    # iterate through the last index set
+    for (i1, i2, j2) in I_y_q:
+        n += 1                              # dimension
+                                            # determinant exponents below
+        sx += (i1 + i2)                     # exponent for X
+        sy += (floor((i1 + i2) / 2) + j2)   # exponent for Y
+        se += (m - (i1 + i2))               # exponent for e
+
+    # calulate explicit delta
+    delta = ((((1/2) - alpha)*sx) + (n*m) - ((1/2)*sy) - alpha*se) / sx
+    asymptotic_delta = ((((1/2) - 1)*sx) + (n*m) - ((1/2)*sy) - 1*se) / sx
+
+    return delta, asymptotic_delta
 
 
 def optimize_tau(e, m, X, Y, N, jsonoutput):
     """
     Brute force the optimal tau for the lattice attack.
     Calculate the determinant and check if its smaller
-    than e^nm. If not, exit the program.
+    than e**nm. If not, exit the program.
     """
     # initialize variables
     n = sx = sy = se = 0
     saved_delta = saved_tau = 0
     tau = 0.5
 
-    # calculate alpha in e = N^alpha
+    # calculate alpha in e = N**alpha
     alpha = log(e, N)
 
     # iterate 0.5 <= tau <= 1
@@ -136,12 +186,12 @@ def optimize_tau(e, m, X, Y, N, jsonoutput):
         pprint("upper theoretical bound: {}".format(saved_delta))
 
     # calculate the bound according to the papers formula
-    detB = (X^sx) * (Y^sy) * (e^se)
+    detB = (X**sx) * (Y**sy) * (e**se)
 
     # if the determinant doesnt fulfill howgrave graham...
-    if not (detB < e^(n*m)) and not jsonoutput:
+    if not (detB < e**(n*m)) and not jsonoutput:
         # ...exit with an error
-        pprint("[ " + Fore.YELLOW + "WARNING" + Fore.RESET + " ] determinant greater than e^nm")
+        pprint("[ " + Fore.YELLOW + "WARNING" + Fore.RESET + " ] determinant greater than e**nm")
 
     # otherwise return the optimal tau
     return tau

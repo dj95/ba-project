@@ -48,7 +48,7 @@ def generate_keys(bit_length=1024, delta=0.020, m=4):
 
         e = inverse_mod(d, (p - 1) * (q - 1))
 
-        # make sure N and (N - 1) can be inverted in e^m
+        # make sure N and (N - 1) can be inverted in e**m
         if gcd(e**m, N) != 1 or gcd(e**m, N - 1) != 1:
             keys = generate_keys(bit_length, delta, m)
 

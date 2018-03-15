@@ -22,13 +22,13 @@ def g(i1, i2, j1, j2, u, N, e, m):
 
     polynomial = 1
 
-    polynomial *= xp1^j1
-    polynomial *= xp2^j2
-    polynomial *= yq^(int(floor((i1 + i2) / 2)))
-    polynomial *= fp1_val^i1
-    polynomial *= fp2_val^i2
-    polynomial *= h_val^u
-    polynomial *= e^(m - (i1 + i2 + u))
+    polynomial *= xp1**j1
+    polynomial *= xp2**j2
+    polynomial *= yq**(int(floor((i1 + i2) / 2)))
+    polynomial *= fp1_val**i1
+    polynomial *= fp2_val**i2
+    polynomial *= h_val**u
+    polynomial *= e**(m - (i1 + i2 + u))
 
     if polynomial == 0:
         return 0
@@ -50,10 +50,10 @@ def gp(i1, i2, j1, N, e, m):
 
     polynomial = 1
 
-    polynomial *= yq^(int(floor((i1 + i2) / 2)) - j1)
-    polynomial *= (fp1_val)^i1
-    polynomial *= (fp2_val)^i2
-    polynomial *= e^(m - (i1 + i2))
+    polynomial *= yq**(int(floor((i1 + i2) / 2)) - j1)
+    polynomial *= (fp1_val)**i1
+    polynomial *= (fp2_val)**i2
+    polynomial *= e**(m - (i1 + i2))
 
     polynomial = substitute_y(polynomial, N, e, m)
     polynomial = substitute_x(polynomial, e, m)
@@ -72,10 +72,10 @@ def gq(i1, i2, j2, N, e, m):
 
     polynomial = 1
 
-    polynomial *= yq^(int(floor((i1 + i2) / 2)) + j2)
-    polynomial *= fp1_val^i1
-    polynomial *= fp2_val^i2
-    polynomial *= e^(m - (i1 + i2))
+    polynomial *= yq**(int(floor((i1 + i2) / 2)) + j2)
+    polynomial *= fp1_val**i1
+    polynomial *= fp2_val**i2
+    polynomial *= e**(m - (i1 + i2))
 
     polynomial = substitute_y(polynomial, N, e, m)
     polynomial = substitute_x(polynomial, e, m)

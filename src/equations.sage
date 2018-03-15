@@ -29,7 +29,7 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
                         monom = 1
 
                         # set the correct sign
-                        monom *= (-1)^(2*ip1 + i2 - ip + u - l + kp2)
+                        monom *= (-1)**(2*ip1 + i2 - ip + u - l + kp2)
 
                         # multiply all of the binomial coefficients
                         monom *= binomial(i2, ip - ip1)
@@ -39,13 +39,13 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
                         monom *= binomial(i2 - ip + ip1 + u - l, kp2)
 
                         # multiply N and e to the coefficient
-                        monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + l)
-                        monom *= e^(m - (i1 + i2 + u))
+                        monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)) + l)
+                        monom *= e**(m - (i1 + i2 + u))
 
                         # multiply with the correct grades for xp1, xp2, yp
-                        monom *= (xp1)^(i1 + j1 + u - kp1)
-                        monom *= (xp2)^(i2 + j2 + u - kp2)
-                        monom *= (yp)^(ip - int(floor((i1 + i2) / 2)))
+                        monom *= (xp1)**(i1 + j1 + u - kp1)
+                        monom *= (xp2)**(i2 + j2 + u - kp2)
+                        monom *= (yp)**(ip - int(floor((i1 + i2) / 2)))
 
                         # add the monom to the polynom
                         p += monom
@@ -60,7 +60,7 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
                         monom = 1
 
                         # set the correct sign
-                        monom *= (-1)^(2*ip1 + i2 - ip + u - l + kq1)
+                        monom *= (-1)**(2*ip1 + i2 - ip + u - l + kq1)
 
                         # multiply all of the binomial coefficients
                         monom *= binomial(i2, ip - ip1)
@@ -70,13 +70,13 @@ def h_eq(i1, i2, j1, j2, u, N, e ,m, X, Y):
                         monom *= binomial(ip + j2 + l - ip1, kq2)
 
                         # multiply N and e to the coefficient
-                        monom *= N^(i1 - ip1 + ip + l)
-                        monom *= e^(m - (i1 + i2 + u))
+                        monom *= N**(i1 - ip1 + ip + l)
+                        monom *= e**(m - (i1 + i2 + u))
 
                         # multiply with the correct grades for xp1, xp2, yp
-                        monom *= (xq1)^(i1 + j1 + u - kq1)
-                        monom *= (xq2)^(i2 + j2 + u - kq2)
-                        monom *= (yq)^(int(floor((i1 + i2) / 2)) - ip)
+                        monom *= (xq1)**(i1 + j1 + u - kq1)
+                        monom *= (xq2)**(i2 + j2 + u - kq2)
+                        monom *= (yq)**(int(floor((i1 + i2) / 2)) - ip)
 
                         # add the monom to the polynom
                         p += monom
@@ -97,20 +97,20 @@ def h_u_check(i1, i2, j1, j2, u, N, e, m):
                 # initialize the monom
                 monom = 1
 
-                monom *= (-1)^(2*ip1 + i2 - ip + u - l)
+                monom *= (-1)**(2*ip1 + i2 - ip + u - l)
 
                 monom *= binomial(i2, ip - ip1)
                 monom *= binomial(i1, ip1)
                 monom *= binomial(u, l)
 
-                monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + l)
-                monom *= e^(m - (i1 + i2 + u))
+                monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)) + l)
+                monom *= e**(m - (i1 + i2 + u))
 
-                monom *= xp1^(ip1 + j1 + u - l)
-                monom *= xp2^(ip - ip1 + j2 + l)
-                monom *= (xp1 + 1)^(i1 - ip1 + l)
-                monom *= (xp2 - 1)^(i2 - ip + ip1 + u - l)
-                monom *= yp^(ip - int(floor((i1 + i2) / 2)))
+                monom *= xp1**(ip1 + j1 + u - l)
+                monom *= xp2**(ip - ip1 + j2 + l)
+                monom *= (xp1 + 1)**(i1 - ip1 + l)
+                monom *= (xp2 - 1)**(i2 - ip + ip1 + u - l)
+                monom *= yp**(ip - int(floor((i1 + i2) / 2)))
 
                 p += monom
 
@@ -120,20 +120,20 @@ def h_u_check(i1, i2, j1, j2, u, N, e, m):
                 # initialize the monom
                 monom = 1
     
-                monom *= (-1)^(2*ip1 + i2 - ip + u - l)
+                monom *= (-1)**(2*ip1 + i2 - ip + u - l)
     
                 monom *= binomial(i2, ip - ip1)
                 monom *= binomial(i1, ip1)
                 monom *= binomial(u, l)
     
-                monom *= N^(i1 - ip1 + ip + l)
-                monom *= e^(m - (i1 + i2 + u))
+                monom *= N**(i1 - ip1 + ip + l)
+                monom *= e**(m - (i1 + i2 + u))
     
-                monom *= (xq1 - 1)^(ip1 + j1 + u - l)
-                monom *= (xq2 + 1)^(ip - ip1 + j2 + l)
-                monom *= xq1^(i1 - ip1 + l)
-                monom *= xq2^(i2 - ip + ip1 + u - l)
-                monom *= yq^(int(floor((i1 + i2) / 2)) - ip)
+                monom *= (xq1 - 1)**(ip1 + j1 + u - l)
+                monom *= (xq2 + 1)**(ip - ip1 + j2 + l)
+                monom *= xq1**(i1 - ip1 + l)
+                monom *= xq2**(i2 - ip + ip1 + u - l)
+                monom *= yq**(int(floor((i1 + i2) / 2)) - ip)
     
                 p += monom
 
@@ -151,20 +151,20 @@ def g_p_check_before_y_sub(i1, i2, j1, N, e, m):
         for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
             monom = 1
 
-            monom *= (-1)^(2*ip1 + i2 - ip)
+            monom *= (-1)**(2*ip1 + i2 - ip)
 
             monom *= binomial(i2, ip - ip1)
             monom *= binomial(i1, ip1)
 
-            monom *= N^(i1 - ip1)
-            monom *= e^(m - (i1 + i2))
+            monom *= N**(i1 - ip1)
+            monom *= e**(m - (i1 + i2))
 
-            monom *= xp1^(ip1)
-            monom *= xp2^(ip - ip1)
-            monom *= xq1^(i1 - ip1)
-            monom *= xq2^(i2 - ip + ip1)
-            monom *= yp^(ip)
-            monom *= yq^(int(floor((i1 + i2) / 2)) - j1)
+            monom *= xp1**(ip1)
+            monom *= xp2**(ip - ip1)
+            monom *= xq1**(i1 - ip1)
+            monom *= xq2**(i2 - ip + ip1)
+            monom *= yp**(ip)
+            monom *= yq**(int(floor((i1 + i2) / 2)) - j1)
 
             p += monom
     return p
@@ -181,29 +181,29 @@ def g_p_check(i1, i2, j1, N, e, m, substitute=True):
         for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
             monom = 1
 
-            monom *= (-1)^(2*ip1 + i2 - ip)
+            monom *= (-1)**(2*ip1 + i2 - ip)
 
             monom *= binomial(i2, ip - ip1)
             monom *= binomial(i1, ip1)
 
             #TODO: fehler
-            #monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+            #monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)))
 
             # korrekter Exponent fuer N
-            monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) - j1)
-            monom *= e^(m - (i1 + i2))
+            monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)) - j1)
+            monom *= e**(m - (i1 + i2))
 
-            monom *= xp1^(ip1)
-            monom *= xp2^(ip - ip1)
+            monom *= xp1**(ip1)
+            monom *= xp2**(ip - ip1)
 
             if substitute:
-                monom *= (xp1 + 1)^(i1 - ip1)
-                monom *= (xp2 - 1)^(i2 - ip + ip1)
+                monom *= (xp1 + 1)**(i1 - ip1)
+                monom *= (xp2 - 1)**(i2 - ip + ip1)
             else:
-                monom *= xq1^(i1 - ip1)
-                monom *= xq2^(i2 - ip + ip1)
+                monom *= xq1**(i1 - ip1)
+                monom *= xq2**(i2 - ip + ip1)
 
-            monom *= yp^(ip - int(floor((i1 + i2) / 2)) + j1)
+            monom *= yp**(ip - int(floor((i1 + i2) / 2)) + j1)
 
             p += monom
 
@@ -211,25 +211,25 @@ def g_p_check(i1, i2, j1, N, e, m, substitute=True):
         for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
             monom = 1
 
-            monom *= (-1)^(2*ip1 + i2 - ip)
+            monom *= (-1)**(2*ip1 + i2 - ip)
 
             monom *= binomial(i2, ip - ip1)
             monom *= binomial(i1, ip1)
 
-            monom *= N^(i1 - ip1 + ip)
-            monom *= e^(m - (i1 + i2))
+            monom *= N**(i1 - ip1 + ip)
+            monom *= e**(m - (i1 + i2))
 
             if substitute:
-                monom *= (xq1 - 1)^(ip1)
-                monom *= (xq2 + 1)^(ip - ip1)
+                monom *= (xq1 - 1)**(ip1)
+                monom *= (xq2 + 1)**(ip - ip1)
             else:
-                monom *= xp1^(ip1)
-                monom *= xp2^(ip - ip1)
+                monom *= xp1**(ip1)
+                monom *= xp2**(ip - ip1)
 
-            monom *= xq1^(i1 - ip1)
-            monom *= xq2^(i2 - ip + ip1)
+            monom *= xq1**(i1 - ip1)
+            monom *= xq2**(i2 - ip + ip1)
 
-            monom *= yq^(int(floor((i1 + i2) / 2)) - ip - j1)
+            monom *= yq**(int(floor((i1 + i2) / 2)) - ip - j1)
 
             p += monom
     return p
@@ -255,7 +255,7 @@ def g_p(i1, i2, j1, N, e, m, X, Y):
                     monom = 1
 
                     # set the correct sign
-                    monom *= (-1)^(2*ip1 + i2 - ip + kp2)
+                    monom *= (-1)**(2*ip1 + i2 - ip + kp2)
 
                     # multiply all of the binomial coefficients
                     monom *= binomial(i2, ip - ip1)
@@ -264,13 +264,13 @@ def g_p(i1, i2, j1, N, e, m, X, Y):
                     monom *= binomial(i2 - ip + ip1, kp2)
 
                     # multiply N and e to the coefficient
-                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) - j1)
-                    monom *= e^(m - (i1 + i2))
+                    monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)) - j1)
+                    monom *= e**(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= (xp1)^(i1 - kp1)
-                    monom *= (xp2)^(i2 - kp2)
-                    monom *= (yp)^(ip - int(floor((i1 + i2) / 2)) + j1)
+                    monom *= (xp1)**(i1 - kp1)
+                    monom *= (xp2)**(i2 - kp2)
+                    monom *= (yp)**(ip - int(floor((i1 + i2) / 2)) + j1)
 
                     # add the monom to the polynom
                     p += monom
@@ -284,7 +284,7 @@ def g_p(i1, i2, j1, N, e, m, X, Y):
                     monom = 1
 
                     # set the correct sign
-                    monom *= (-1)^(2*ip1 + i2 - ip + kq1)
+                    monom *= (-1)**(2*ip1 + i2 - ip + kq1)
 
                     # multiply all of the binomial coefficients
                     monom *= binomial(i2, ip - ip1)
@@ -293,13 +293,13 @@ def g_p(i1, i2, j1, N, e, m, X, Y):
                     monom *= binomial(ip - ip1, kq2)
 
                     # multiply N and e to the coefficient
-                    monom *= N^(i1 - ip1 + ip)
-                    monom *= e^(m - (i1 + i2))
+                    monom *= N**(i1 - ip1 + ip)
+                    monom *= e**(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= (xq1)^(i1 - kq1)
-                    monom *= (xq2)^(i2 - kq2)
-                    monom *= (yq)^(int(floor((i1 + i2) / 2)) - j1 - ip)
+                    monom *= (xq1)**(i1 - kq1)
+                    monom *= (xq2)**(i2 - kq2)
+                    monom *= (yq)**(int(floor((i1 + i2) / 2)) - j1 - ip)
 
                     # add the monom to the polynom
                     p += monom
@@ -318,23 +318,23 @@ def g_q_check(i1, i2, j2, N, e, m):
         for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
             monom = 1
 
-            monom *= (-1)^(2*ip1 + i2 - ip)
+            monom *= (-1)**(2*ip1 + i2 - ip)
 
             monom *= binomial(i2, ip - ip1)
             monom *= binomial(i1, ip1)
 
             #TODO: fehler
-            #monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
+            #monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)))
 
             # korrekter Exponent fuer N
-            monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + j2)
-            monom *= e^(m - (i1 + i2))
+            monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)) + j2)
+            monom *= e**(m - (i1 + i2))
 
-            monom *= xp1^(ip1)
-            monom *= xp2^(ip - ip1)
-            monom *= xq1^(i1 - ip1)
-            monom *= xq2^(i2 - ip + ip1)
-            monom *= yp^(ip - int(floor((i1 + i2) / 2)) - j2)
+            monom *= xp1**(ip1)
+            monom *= xp2**(ip - ip1)
+            monom *= xq1**(i1 - ip1)
+            monom *= xq2**(i2 - ip + ip1)
+            monom *= yp**(ip - int(floor((i1 + i2) / 2)) - j2)
 
             p += monom
 
@@ -342,19 +342,19 @@ def g_q_check(i1, i2, j2, N, e, m):
         for ip1 in range(max(0, ip - i2), min(i1, ip) + 1):
             monom = 1
 
-            monom *= (-1)^(2*ip1 + i2 - ip)
+            monom *= (-1)**(2*ip1 + i2 - ip)
 
             monom *= binomial(i2, ip - ip1)
             monom *= binomial(i1, ip1)
 
-            monom *= N^(i1 - ip1 + ip)
-            monom *= e^(m - (i1 + i2))
+            monom *= N**(i1 - ip1 + ip)
+            monom *= e**(m - (i1 + i2))
 
-            monom *= xp1^(ip1)
-            monom *= xp2^(ip - ip1)
-            monom *= xq1^(i1 - ip1)
-            monom *= xq2^(i2 - ip + ip1)
-            monom *= yq^(int(floor((i1 + i2) / 2)) - ip + j2)
+            monom *= xp1**(ip1)
+            monom *= xp2**(ip - ip1)
+            monom *= xq1**(i1 - ip1)
+            monom *= xq2**(i2 - ip + ip1)
+            monom *= yq**(int(floor((i1 + i2) / 2)) - ip + j2)
 
             p += monom
     return p
@@ -382,7 +382,7 @@ def g_q(i1, i2, j2, N, e, m, X, Y):
                     monom = 1
 
                     # set the correct sign
-                    monom *= (-1)^(2*ip1 + i2 - ip + kp2)
+                    monom *= (-1)**(2*ip1 + i2 - ip + kp2)
 
                     # multiply all of the binomial coefficients
                     monom *= binomial(i2, ip - ip1)
@@ -391,14 +391,14 @@ def g_q(i1, i2, j2, N, e, m, X, Y):
                     monom *= binomial(i2 - ip + ip1, kp2)
 
                     # multiply N and e to the coefficient
-                    #monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)))
-                    monom *= N^(i1 - ip1 + int(floor((i1 + i2) / 2)) + j2)
-                    monom *= e^(m - (i1 + i2))
+                    #monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)))
+                    monom *= N**(i1 - ip1 + int(floor((i1 + i2) / 2)) + j2)
+                    monom *= e**(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= (xp1)^(i1 - kp1)
-                    monom *= (xp2)^(i2 - kp2)
-                    monom *= (yp)^(ip - int(floor((i1 + i2) / 2)) - j2)
+                    monom *= (xp1)**(i1 - kp1)
+                    monom *= (xp2)**(i2 - kp2)
+                    monom *= (yp)**(ip - int(floor((i1 + i2) / 2)) - j2)
 
                     # add the monom to the polynom
                     p += monom
@@ -412,7 +412,7 @@ def g_q(i1, i2, j2, N, e, m, X, Y):
                     monom = 1
 
                     # set the correct sign
-                    monom *= (-1)^(2*ip1 + i2 - ip + kq1)
+                    monom *= (-1)**(2*ip1 + i2 - ip + kq1)
 
                     # multiply all of the binomial coefficients
                     monom *= binomial(i2, ip - ip1)
@@ -421,13 +421,13 @@ def g_q(i1, i2, j2, N, e, m, X, Y):
                     monom *= binomial(ip - ip1, kq2)
 
                     # multiply N and e to the coefficient
-                    monom *= N^(i1 - ip1 + ip)
-                    monom *= e^(m - (i1 + i2))
+                    monom *= N**(i1 - ip1 + ip)
+                    monom *= e**(m - (i1 + i2))
         
                     # multiply with the correct grades for xp1, xp2, yp
-                    monom *= (xq1)^(i1 - kq1)
-                    monom *= (xq2)^(i2 - kq2)
-                    monom *= (yq)^(int(floor((i1 + i2) / 2)) + j2 - ip)
+                    monom *= (xq1)**(i1 - kq1)
+                    monom *= (xq2)**(i2 - kq2)
+                    monom *= (yq)**(int(floor((i1 + i2) / 2)) + j2 - ip)
 
                     # add the monom to the polynom
                     p += monom

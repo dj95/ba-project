@@ -48,31 +48,31 @@ def substitute_y(polynomial, N, e, m):
                 #print('[sub|y] -> substitute yp')
                 # substitute all yp times yq*qp=N
                 exp_N = exp_yp
-                monome *= N^exp_N
+                monome *= N**exp_N
 
                 # set the new multigrade
                 exp_yq = exp_yq - exp_yp
                 exp_yp = 0
-                #print('[sub|y] N^{} * yq^{} * yp^{}'.format(exp_N, exp_yq, exp_yp))
+                #print('[sub|y] N**{} * yq**{} * yp**{}'.format(exp_N, exp_yq, exp_yp))
             elif exp_yp > exp_yq:
                 #print('[sub|y] -> substitute yq')
                 # substitute all yq times yq*qp=N
                 exp_N = exp_yq
-                monome *= N^exp_N
+                monome *= N**exp_N
 
                 # set the new multigrade
                 exp_yp = exp_yp - exp_yq
                 exp_yq = 0
-                #print('[sub|y] N^{} * yq^{} * yp^{}'.format(exp_N, exp_yq, exp_yp))
+                #print('[sub|y] N**{} * yq**{} * yp**{}'.format(exp_N, exp_yq, exp_yp))
         #print('[sub|y] -> {} {} {} {} {} {} after substitution'.format(exp_xp1, exp_xp2, exp_yq, exp_yp, exp_xq1, exp_xq2))
 
         # set the exponents related to the multigrades to our momone
-        monome *= xp1^exp_xp1
-        monome *= xp2^exp_xp2
-        monome *= yq^exp_yq
-        monome *= yp^exp_yp
-        monome *= xq1^exp_xq1
-        monome *= xq2^exp_xq2
+        monome *= xp1**exp_xp1
+        monome *= xp2**exp_xp2
+        monome *= yq**exp_yq
+        monome *= yp**exp_yp
+        monome *= xq1**exp_xq1
+        monome *= xq2**exp_xq2
 
         # add the monome to the polynomial
         output_polynomial += monome
@@ -112,15 +112,15 @@ def substitute_x(polynomial, e, m):
         exp_yq = multigrade[5]
 
         # initial grades for xp and xq
-        xp = xp1^exp_xp1 * xp2^exp_xp2
-        xq = xq1^exp_xq1 * xq2^exp_xq2
+        xp = xp1**exp_xp1 * xp2**exp_xp2
+        xq = xq1**exp_xq1 * xq2**exp_xq2
 
         # check if the monome contains p terms only
         if exp_yq == 0 and exp_yp > 0:
             # if xq1 or xq2 exist in this monome
             if exp_xq1 != 0 or exp_xq2 != 0:
                 # replace xq in this monome by xp
-                xp = (xp1 + 1)^exp_xq1 * (xp2 - 1)^exp_xq2 * xp1^exp_xp1 * xp2^exp_xp2
+                xp = (xp1 + 1)**exp_xq1 * (xp2 - 1)**exp_xq2 * xp1**exp_xp1 * xp2**exp_xp2
 
                 # set xq to 1
                 xq = 1
@@ -129,7 +129,7 @@ def substitute_x(polynomial, e, m):
             # if xp1 or xp2 exist in this monome
             if exp_xp1 != 0 or exp_xp2 != 0:
                 # replace xp in this monome by xq
-                xq = (xq1 - 1)^exp_xp1 * (xq2 + 1)^exp_xp2 * xq1^exp_xq1 * xq2^exp_xq2
+                xq = (xq1 - 1)**exp_xp1 * (xq2 + 1)**exp_xp2 * xq1**exp_xq1 * xq2**exp_xq2
 
                 # set xp to 1
                 xp = 1
@@ -137,15 +137,15 @@ def substitute_x(polynomial, e, m):
             # if xp1 or xp2 exist in this monome
             if exp_xp1 != 0 or exp_xp2 != 0:
                 # replace xp in this monome by xq
-                xq = (xq1 - 1)^exp_xp1 * (xq2 + 1)^exp_xp2 * xq1^exp_xq1 * xq2^exp_xq2
+                xq = (xq1 - 1)**exp_xp1 * (xq2 + 1)**exp_xp2 * xq1**exp_xq1 * xq2**exp_xq2
         
                 # set xp to 1
                 xp = 1
         
         # build the correct grade
         monome *= xp
-        monome *= yq^exp_yq
-        monome *= yp^exp_yp
+        monome *= yq**exp_yq
+        monome *= yp**exp_yp
         monome *= xq
 
         # add monome to the output polynomial
@@ -184,7 +184,7 @@ def substitute_xp(polynomial):
 
 
         # replace xp in this monome by xq
-        xq = (xq1 - 1)^exp_xp1 * (xq2 + 1)^exp_xp2 * xq1^exp_xq1 * xq2^exp_xq2
+        xq = (xq1 - 1)**exp_xp1 * (xq2 + 1)**exp_xp2 * xq1**exp_xq1 * xq2**exp_xq2
 
         # set xp to 1
         xp = 1
@@ -192,8 +192,8 @@ def substitute_xp(polynomial):
         
         # build the correct grade
         monome *= xp
-        monome *= yq^exp_yq
-        monome *= yp^exp_yp
+        monome *= yq**exp_yq
+        monome *= yp**exp_yp
         monome *= xq
 
         # add monome to the output polynomial
@@ -204,10 +204,10 @@ def substitute_xp(polynomial):
 
 
 def substitute_N(matrix, N, e, m, X, Y):
-    # calculate e^m for the inverse
-    em = e^m
+    # calculate e**m for the inverse
+    em = e**m
 
-    # get the inverse of N in e^m
+    # get the inverse of N in e**m
     N_inv = inverse_mod(N, em)
     N1_inv = inverse_mod(N - 1, em)
 

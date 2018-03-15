@@ -42,8 +42,8 @@ class Coppersmith(object):
         self.__keys = keys
 
         # calculate bounds for xp1, xp2, xq1, xq2, yp, yq
-        self.__X = ceil(keys['e'] * keys['N']^(delta - 0.5))
-        self.__Y = 2*ceil(keys['N']^(0.5))
+        self.__X = ceil(keys['e'] * keys['N']**(delta - 0.5))
+        self.__Y = 2*ceil(keys['N']**(0.5))
 
         self.__matrix = None
         self.__reduced_matrix = None
@@ -162,12 +162,12 @@ class Coppersmith(object):
                 coefficient = row[i]
 
                 # set the correct grade to the variables of each monomial
-                x_p_1 = xp1^int(monom_grade[0])
-                x_p_2 = xp2^int(monom_grade[1])
-                x_q_1 = xq1^int(monom_grade[2])
-                x_q_2 = xq2^int(monom_grade[3])
-                y_p = yp^int(monom_grade[4])
-                y_q = yq^int(monom_grade[5])
+                x_p_1 = xp1**int(monom_grade[0])
+                x_p_2 = xp2**int(monom_grade[1])
+                x_q_1 = xq1**int(monom_grade[2])
+                x_q_2 = xq2**int(monom_grade[3])
+                y_p = yp**int(monom_grade[4])
+                y_q = yq**int(monom_grade[5])
 
                 exp_xp1 = int(monom_grade[0])
                 exp_xp2 = int(monom_grade[1])
@@ -176,8 +176,8 @@ class Coppersmith(object):
                 exp_yp = int(monom_grade[4])
                 exp_yq = int(monom_grade[5])
 
-                x_bound = self.__X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
-                y_bound = self.__Y^(exp_yp + exp_yq)
+                x_bound = self.__X**(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+                y_bound = self.__Y**(exp_yp + exp_yq)
                 
                 x_bound_inverse = inverse_mod(x_bound, self.__e**self.__m)
                 y_bound_inverse = inverse_mod(y_bound, self.__e**self.__m)
@@ -244,16 +244,16 @@ class Coppersmith(object):
                     monome_count += 1
 
                 # set the correct grade to the variables of each monomial
-                x_p_1 = (xp1)^int(monom_grade[0])
-                x_p_2 = (xp2)^int(monom_grade[1])
-                x_q_1 = (xq1)^int(monom_grade[2])
-                x_q_2 = (xq2)^int(monom_grade[3])
-                y_p = (yp)^int(monom_grade[4])
-                y_q = (yq)^int(monom_grade[5])
+                x_p_1 = (xp1)**int(monom_grade[0])
+                x_p_2 = (xp2)**int(monom_grade[1])
+                x_q_1 = (xq1)**int(monom_grade[2])
+                x_q_2 = (xq2)**int(monom_grade[3])
+                y_p = (yp)**int(monom_grade[4])
+                y_q = (yq)**int(monom_grade[5])
 
                 # add the absolute value of the coefficient squared for howgrave
-                # grahams theorem howgrave_sum += abs(coefficient)^2
-                howgrave_sum += abs(coefficient)^2
+                # grahams theorem howgrave_sum += abs(coefficient)**2
+                howgrave_sum += abs(coefficient)**2
 
                 exp_xp1 = int(monom_grade[0])
                 exp_xp2 = int(monom_grade[1])
@@ -262,8 +262,8 @@ class Coppersmith(object):
                 exp_yp = int(monom_grade[4])
                 exp_yq = int(monom_grade[5])
 
-                x_bound = self.__X^(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
-                y_bound = self.__Y^(exp_yp + exp_yq)
+                x_bound = self.__X**(exp_xp1 + exp_xp2 + exp_xq1 + exp_xq2)
+                y_bound = self.__Y**(exp_yp + exp_yq)
 
                 coefficient = ((coefficient) / (x_bound * y_bound))
 
@@ -328,7 +328,7 @@ class Coppersmith(object):
 
             for monom in row.dict():
                 #print("{} - {}".format(monom, row.dict()[monom]))
-                mon = row.dict()[monom] * x1^monom[0] * x2^monom[1] * y1^monom[4] * y2^monom[5] * x3^monom[2] * x4^monom[3]
+                mon = row.dict()[monom] * x1**monom[0] * x2**monom[1] * y1**monom[4] * y2**monom[5] * x3**monom[2] * x4**monom[3]
                 eq1 += mon
 
             eq = eq1 == 0
@@ -453,6 +453,38 @@ def instantiate_attack(delta, m, bit_length, tau, debug, printmatrix, jsonoutput
     c.print_timings()
 
 
+def deltagen(m, bit_length, delta):
+    print('Generate theoretical deltas')
+    print("----------------------------------------")
+
+    load('./equations.sage')
+    load('./index_set.sage')
+    load('./shiftpolynomials.sage')
+    load('./substitute.sage')
+    load('./utils.sage')
+
+    for mm in range(4, m + 1):
+        print("<<< m: {0}  delta: {1:.6f}  |N|: {2}".format(mm, float(delta), bit_length))
+
+        # generate a complete crt-rsa keyset with the given parameters
+        keys = generate_keys(
+                bit_length=bit_length,
+                delta=delta,
+                m=mm
+                )
+
+        X = ceil(keys['e'] * keys['N']**(delta - 0.5))
+        Y = 2*ceil(keys['N']**(0.5))
+
+        tau = optimize_tau(keys['e'], mm, X, Y, keys['N'], true)
+        delta_T, delta_A = calculate_theoretical_delta(mm, tau, keys['N'], keys['e'])
+
+        print(">>> delta_T: {0:.6f}  delta_A: {1:.6f}".format(delta_T, float(delta_A)))
+        print("----------------------------------------")
+
+    return
+
+
 # execute the main function, if the script is called on the commandline
 if __name__ == '__main__':
     # import sage modules
@@ -467,7 +499,12 @@ if __name__ == '__main__':
     load('./test.sage')
 
     # parse arguments
-    delta, m, bit_length, tau, debug, printmatrix, jsonoutput = parse_args()
+    delta, m, bit_length, tau, debug, printmatrix, jsonoutput, dgen = parse_args()
+
+    # generate delta table
+    if dgen:
+        deltagen(m, bit_length, delta)
+        sys.exit()
 
     # call the main function
     instantiate_attack(
