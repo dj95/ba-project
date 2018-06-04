@@ -7,6 +7,6 @@ services:
             dockerfile: docker/Dockerfile
         image: coppersmith
         volumes:
-            - ./src:/home/sage/
+            - ./src:/home/sage/project
         container_name: coppersmith
-        command: ["/home/sage/main.sage", "-m", "6", "-s", "250", "-d", "0.035"]
+        command: ["/home/sage/project/main.sage", "-m", "6", "-s", "250", "-d", "0.035"]

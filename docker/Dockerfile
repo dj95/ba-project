@@ -1,14 +1,8 @@
-FROM sagemath/sagemath:8.0
-
-#USER root
+FROM sagemath/sagemath:8.2
 
 RUN sage -pip install colorama
-#RUN apt-get install python-colorama
 
-USER sage
-
-WORKDIR /home/sage
-
-COPY ./src/ /home/sage/.
+WORKDIR /home/sage/project
+COPY ./src/ /home/sage/project/.
 
 ENTRYPOINT [ "sage-entrypoint" ]
